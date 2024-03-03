@@ -96,7 +96,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textJoinPW"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="text|textPassword" />
 
                 <TextView
                     android:id="@+id/textView"
@@ -118,7 +119,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textJoinCheckPW"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="text|textPassword" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

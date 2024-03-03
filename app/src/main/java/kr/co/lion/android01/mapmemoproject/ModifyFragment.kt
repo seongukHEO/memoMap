@@ -1,5 +1,6 @@
 package kr.co.lion.android01.mapmemoproject
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ class ModifyFragment : Fragment() {
         thirdActivity = activity as ThirdActivity
         setToolBar()
         setEvent()
+        showResult()
         return fragmentModifyBinding.root
     }
 
@@ -42,8 +44,20 @@ class ModifyFragment : Fragment() {
     fun setEvent(){
         fragmentModifyBinding.apply {
             floatingActionButton2.setOnClickListener {
-                thirdActivity.removeFragment(FragmentName2.MODIFY_FRAGMENT)
+                enum.showDiaLog(thirdActivity, "메모 수정", "메모를 수정하시겠습니까?"){ dialogInterface: DialogInterface, i: Int ->
+                    thirdActivity.removeFragment(FragmentName2.MODIFY_FRAGMENT)
+                }
             }
+        }
+    }
+
+    //값을 보여준다
+    fun showResult(){
+        fragmentModifyBinding.apply {
+            textModifyNickName.setText("허성욱")
+            textModifyDate.setText("2024-03-04")
+            textModifyTitle.setText("후우")
+            textModifyContents.setText("안녕 !!")
         }
     }
 
