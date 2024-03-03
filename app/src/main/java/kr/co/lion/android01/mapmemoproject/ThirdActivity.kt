@@ -3,10 +3,13 @@ package kr.co.lion.android01.mapmemoproject
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.transition.MaterialSharedAxis
 import kr.co.lion.android01.mapmemoproject.databinding.ActivityThirdBinding
+import kotlin.concurrent.thread
 
 class ThirdActivity : AppCompatActivity() {
 
@@ -19,9 +22,10 @@ class ThirdActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         activityThirdBinding = ActivityThirdBinding.inflate(layoutInflater)
         setContentView(activityThirdBinding.root)
+        replaceFragment(FragmentName2.INPUT_FRAGMENT, false, false, null)
     }
 
-    fun replaceFragment(name:FragmentName, addToBackStack:Boolean, isAnimate:Boolean, data:Bundle?){
+    fun replaceFragment(name:FragmentName2, addToBackStack:Boolean, isAnimate:Boolean, data:Bundle?){
 
         SystemClock.sleep(200)
 
@@ -36,17 +40,14 @@ class ThirdActivity : AppCompatActivity() {
         // 이름으로 분기한다.
         // Fragment의 객체를 생성하여 변수에 담아준다.
         when(name){
-            FragmentName.MAIN_FRAGMENT -> {
-                newFragment = MainFragment()
+            FragmentName2.INPUT_FRAGMENT -> {
+                newFragment = InputFragment()
             }
-            FragmentName.JOIN_FRAGMENT -> {
-                newFragment = JoinFragment()
+            FragmentName2.MODIFY_FRAGMENT -> {
+                newFragment = ModifyFragment()
             }
-            FragmentName.SEARCH_ID_FRAGMENT -> {
-                newFragment = SearchIDFragment()
-            }
-            FragmentName.SEARCH_PW_FRAGMENT -> {
-                newFragment = SearchPWFragment()
+            FragmentName2.BOTTOM_FRAGMENT -> {
+                newFragment = BottomFragment()
             }
         }
 
@@ -97,7 +98,7 @@ class ThirdActivity : AppCompatActivity() {
             // Fragment를 교체한다.(이전 Fragment가 없으면 새롭게 추가하는 역할을 수행한다)
             // 첫 번째 매개 변수 : Fragment를 배치할 FragmentContainerView의 ID
             // 두 번째 매개 변수 : 보여주고하는 Fragment 객체를
-            fragmentTransaction.replace(R.id.mainContainer, newFragment!!)
+            fragmentTransaction.replace(R.id.thirdContainer, newFragment!!)
 
             // addToBackStack 변수의 값이 true면 새롭게 보여질 Fragment를 BackStack에 포함시켜 준다.
             if(addToBackStack == true){
@@ -110,10 +111,25 @@ class ThirdActivity : AppCompatActivity() {
     }
 
     // BackStack에서 Fragment를 제거한다.
-    fun removeFragment(name:FragmentName){
+    fun removeFragment(name:FragmentName2){
         SystemClock.sleep(200)
 
         // 지정한 이름으로 있는 Fragment를 BackStack에서 제거한다.
         supportFragmentManager.popBackStack(name.str, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }
+    //포커스를 주고 키보드를 올리는 메서드
+    fun showSoftInput2(view: View){
+        //위의 매개변수로 받은 view는 어떤 textfield에 포커스를 줘야할 지 받아야 하기 때문에 적어준다
+        //뷰에 포커스를 준다
+        view.requestFocus()
+        thread {
+            //딜레이를 준다
+            SystemClock.sleep(200)
+            //키보드 관리 객체를 가져온다
+            var inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            //키보드를 올린다
+            inputMethodManager.showSoftInput(view, 0)
+
+        }
     }
 }

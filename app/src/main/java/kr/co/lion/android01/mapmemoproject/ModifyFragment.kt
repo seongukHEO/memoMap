@@ -5,55 +5,159 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
+import kr.co.lion.android01.mapmemoproject.databinding.FragmentModifyBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ModifyFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ModifyFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    lateinit var fragmentModifyBinding: FragmentModifyBinding
+    lateinit var thirdActivity: ThirdActivity
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        fragmentModifyBinding = FragmentModifyBinding.inflate(layoutInflater)
+        thirdActivity = activity as ThirdActivity
+        setToolBar()
+        setEvent()
+        return fragmentModifyBinding.root
+    }
+
+    //툴바 설정
+    fun setToolBar(){
+        fragmentModifyBinding.apply {
+            materialToolbar9.apply {
+                title = "메모 수정"
+            }
+            bottomAppBar2.apply {
+                setNavigationIcon(R.drawable.arrow_back_24px)
+                setNavigationOnClickListener {
+                    thirdActivity.removeFragment(FragmentName2.MODIFY_FRAGMENT)
+                }
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_modify, container, false)
+    //이벤트 설정
+    fun setEvent(){
+        fragmentModifyBinding.apply {
+            floatingActionButton2.setOnClickListener {
+                thirdActivity.removeFragment(FragmentName2.MODIFY_FRAGMENT)
+            }
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ModifyFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ModifyFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    //화면 구성
+    fun setView(){
+        fragmentModifyBinding.apply {
+            //포커스 주기
+            thirdActivity.showSoftInput2(textModifyNickName)
+
+            //에러 해결
+            textModifyNickName.addTextChangedListener {
+                textModifyLayoutNickName.error = null
             }
+            textModifyTitle.addTextChangedListener {
+                textLayoutModifyTitle.error = null
+            }
+            textModifyContents.addTextChangedListener {
+                textLayoutModifyContents.error = null
+            }
+        }
+    }
+
+    //유효성 검사
+    fun checkOK():Boolean{
+        fragmentModifyBinding.apply {
+            var errorView:View? = null
+
+            var nickname = textModifyNickName.text.toString()
+            if (nickname.trim().isEmpty()){
+                textModifyLayoutNickName.error = "닉네임을 입력해주세요"
+                if (errorView == null){
+                    errorView = textModifyNickName
+                }
+            }else{
+                textModifyLayoutNickName.error = null
+            }
+
+            var title = textModifyTitle.text.toString()
+            if (title.trim().isEmpty()){
+                textLayoutModifyTitle.error = "제목을 입력해주세요"
+                if (errorView == null){
+                    errorView = textModifyTitle
+                }
+            }else{
+                textLayoutModifyTitle.error = null
+            }
+
+            var contents = textModifyContents.text.toString()
+            if (contents.trim().isEmpty()){
+                textLayoutModifyContents.error = "내용을 입력해주세요"
+                if (errorView == null){
+                    errorView = textModifyContents
+                }
+            }else{
+                textLayoutModifyContents.error = null
+            }
+
+            if (errorView != null){
+                thirdActivity.showSoftInput2(errorView)
+                return false
+            }else{
+                return true
+            }
+        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
