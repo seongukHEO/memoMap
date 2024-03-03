@@ -1,11 +1,16 @@
 package kr.co.lion.android01.mapmemoproject
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
@@ -24,6 +29,15 @@ class MainFragment : Fragment() {
         return fragmentMainBinding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        fragmentMainBinding.apply {
+            textMainId.setText("")
+            textMainPW.setText("")
+            lottieLayout2.visibility = View.GONE
+        }
+    }
+
     //툴바 설정
     fun setToolBar(){
         fragmentMainBinding.apply {
@@ -38,6 +52,7 @@ class MainFragment : Fragment() {
         fragmentMainBinding.apply {
             loginButton.setOnClickListener {
                 inputData()
+                enum.hideSoftInput(mainActivity)
 
             }
             gojoinButton.setOnClickListener {
@@ -73,7 +88,21 @@ class MainFragment : Fragment() {
                 }
                 return
             }
-            mainActivity.replaceFragment(FragmentName.JOIN_FRAGMENT, true, true, null)
+
+            lottieLayout2.visibility = View.VISIBLE
+
+
+
+            lottieMain.repeatCount = 1
+            lottieMain.playAnimation()
+
+            lifecycleScope.launch {
+                delay(1500)
+                var newIntent = Intent(mainActivity, SecondActivity::class.java)
+                startActivity(newIntent)
+                enum.hideSoftInput(mainActivity)
+            }
+
         }
     }
 }

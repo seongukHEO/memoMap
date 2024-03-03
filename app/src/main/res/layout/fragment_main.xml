@@ -101,8 +101,19 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/lottieLayout2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottieMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:lottie_autoPlay="true"
+                app:lottie_rawRes="@raw/lottie_main" />
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
