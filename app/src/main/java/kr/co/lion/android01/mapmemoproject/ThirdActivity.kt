@@ -26,6 +26,8 @@ class ThirdActivity : AppCompatActivity() {
 
         activityThirdBinding = ActivityThirdBinding.inflate(layoutInflater)
         setContentView(activityThirdBinding.root)
+
+
         replaceFragment(FragmentName2.INPUT_FRAGMENT, false, false, null)
     }
 
@@ -49,9 +51,6 @@ class ThirdActivity : AppCompatActivity() {
             }
             FragmentName2.MODIFY_FRAGMENT -> {
                 newFragment = ModifyFragment()
-            }
-            FragmentName2.BOTTOM_FRAGMENT -> {
-                newFragment = BottomFragment()
             }
         }
 

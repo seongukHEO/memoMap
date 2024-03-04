@@ -98,7 +98,11 @@ class MainFragment : Fragment() {
 
             lifecycleScope.launch {
                 delay(1500)
+                var str = InfoDAO.selectOneInfo2(mainActivity, showId)
+                var newId = str?.nickName
+
                 var newIntent = Intent(mainActivity, SecondActivity::class.java)
+                newIntent.putExtra("nickname", newId)
                 startActivity(newIntent)
                 enum.hideSoftInput(mainActivity)
             }

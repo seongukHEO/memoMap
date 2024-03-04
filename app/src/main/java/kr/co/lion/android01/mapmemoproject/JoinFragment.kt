@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
-import com.airbnb.lottie.LottieAnimationView
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentJoinBinding
 import java.util.regex.Pattern
 
@@ -170,13 +169,21 @@ class JoinFragment : Fragment() {
             var nickName = textJoinNickName.text.toString()
             var str = InfoDAO.selectOneInfo(mainActivity, nickName)
             if (nickName == str?.nickName){
-                enum.showDiaLog(mainActivity, "닉네임 중복 오류", "이미 사용중인 닉네임입니다"){ dialogInterface: DialogInterface, i: Int ->
+                enum.showDiaLog(mainActivity, "닉네임 중복 오류", "현재 사용중인 닉네임입니다"){ dialogInterface: DialogInterface, i: Int ->
                     enum.showSoftInput(textJoinNickName, mainActivity)
                 }
                 return
             }
 
             var id = textJoinID.text.toString()
+            var checkId = InfoDAO.selectOneInfo2(mainActivity, id)
+            if (id == checkId?.id){
+                enum.showDiaLog(mainActivity, "아이디 중복 오류", "현재 사용중인 아이디입니다"){ dialogInterface: DialogInterface, i: Int ->
+                    enum.showSoftInput(textJoinID, mainActivity)
+
+                }
+                return
+            }
 
 
             var pw = textJoinPW.text.toString()

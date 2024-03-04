@@ -7,4 +7,9 @@
         android:icon="@drawable/edit_24px"
         android:title="연습"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/my_location_here"
+        android:icon="@android:drawable/ic_menu_mylocation"
+        android:title="현재 위치"
+        app:showAsAction="always" />
 </menu>
