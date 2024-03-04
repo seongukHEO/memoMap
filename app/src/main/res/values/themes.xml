@@ -6,4 +6,11 @@
     </style>
 
     <style name="Theme.MapMemoProject" parent="Base.Theme.MapMemoProject" />
+
+    <style name="AppTheme.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/memo_my</item>
+        <item name="windowSplashScreenAnimationDuration">5000</item>
+        <item name="postSplashScreenTheme">@style/Theme.MapMemoProject</item>
+    </style>
 </resources>

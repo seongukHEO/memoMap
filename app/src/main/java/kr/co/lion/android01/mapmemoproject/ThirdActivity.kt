@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.transition.MaterialSharedAxis
@@ -20,6 +21,9 @@ class ThirdActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        installSplashScreen()
+
         activityThirdBinding = ActivityThirdBinding.inflate(layoutInflater)
         setContentView(activityThirdBinding.root)
         replaceFragment(FragmentName2.INPUT_FRAGMENT, false, false, null)
