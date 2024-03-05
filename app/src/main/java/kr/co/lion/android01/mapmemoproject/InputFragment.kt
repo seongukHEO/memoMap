@@ -1,5 +1,6 @@
 package kr.co.lion.android01.mapmemoproject
 
+import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -138,6 +139,8 @@ class InputFragment : Fragment() {
                 }
                 return
             }
+            var latitude = arguments?.getFloat("latitude")!!
+            var longitude = arguments?.getFloat("longitude")!!
 
             var simple = SimpleDateFormat("yyyy-MM-dd")
             var date = simple.format(Date())
@@ -147,7 +150,15 @@ class InputFragment : Fragment() {
 
             var contents = textInputContents.text.toString()
 
+            var memoList = MemoInfo(nickname, date, title, contents, latitude, longitude)
+
+
+            MemoDAO.insertMemo(thirdActivity, memoList)
+
             var newIntent = Intent(thirdActivity, SecondActivity::class.java)
+            newIntent.putExtra("nickname", nickname)
+            newIntent.putExtra("latitude", latitude)
+            newIntent.putExtra("longtiude", longitude)
             startActivity(newIntent)
         }
     }

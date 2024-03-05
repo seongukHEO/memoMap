@@ -27,8 +27,17 @@ class ThirdActivity : AppCompatActivity() {
         activityThirdBinding = ActivityThirdBinding.inflate(layoutInflater)
         setContentView(activityThirdBinding.root)
 
+        var str = intent.getFloatExtra("latitude", 0.0f)
+        var str2 = intent.getFloatExtra("longitude", 0.0f)
+        if (str != null || str2 != null) {
+            var bundle = Bundle()
+            bundle.putFloat("latitude", str)
+            bundle.putFloat("longitude", str2)
 
-        replaceFragment(FragmentName2.INPUT_FRAGMENT, false, false, null)
+            replaceFragment(FragmentName2.INPUT_FRAGMENT, false, false, bundle)
+        }else{
+            replaceFragment(FragmentName2.MODIFY_FRAGMENT, false, false, null)
+        }
     }
 
     fun replaceFragment(name:FragmentName2, addToBackStack:Boolean, isAnimate:Boolean, data:Bundle?){

@@ -24,6 +24,15 @@ data class UserInfo(
     var pw:String
 )
 
+data class MemoInfo(
+    var nickName: String,
+    var date:String,
+    var title:String,
+    var contents:String,
+    var latitude:Float,
+    var longitude:Float
+)
+
 
 
 
