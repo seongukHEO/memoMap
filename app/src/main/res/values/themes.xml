@@ -3,6 +3,11 @@
     <style name="Base.Theme.MapMemoProject" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- 상태바의 색상을 바꿔보자 -->
+        <item name="colorPrimaryDark">@color/buttonColor</item>
+        <item name="android:windowLightStatusBar">true</item>
+
     </style>
 
     <style name="Theme.MapMemoProject" parent="Base.Theme.MapMemoProject" />
@@ -12,5 +17,16 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/memo_my</item>
         <item name="windowSplashScreenAnimationDuration">5000</item>
         <item name="postSplashScreenTheme">@style/Theme.MapMemoProject</item>
+    </style>
+    
+    <!-- 버튼 전용 색도 지정할 수 있을까? -->
+    <style name="Theme.MapMemoProject.Button" parent="ThemeOverlay.Material3.Button">
+        <item name="colorPrimary">@color/buttonColor</item>
+    </style>
+
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/buttonColor</item>
+        <item name="counterTextAppearance">@color/buttonColor</item>
+        <item name="hintTextColor">@color/buttonColor</item>
     </style>
 </resources>

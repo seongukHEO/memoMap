@@ -26,6 +26,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textModifyLayoutNickName"
+            style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="닉네임"
@@ -38,6 +39,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -52,6 +54,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textLayoutModifyTitle"
+            style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -66,6 +69,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textLayoutModifyContents"
+            style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -85,7 +89,8 @@
         android:id="@+id/bottomAppBar2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+        android:layout_gravity="bottom"
+        android:layout_marginTop="680dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton2"

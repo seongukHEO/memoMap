@@ -31,6 +31,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textJoinLayoutName"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="이름"
@@ -44,6 +45,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textJoinLayoutNumber"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -59,6 +61,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textJoinLayoutNickName"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -73,6 +76,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textJoinLayoutID"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -87,6 +91,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textJoinLayoutPW"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -110,6 +115,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textJoinLayoutCheckPW"
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"

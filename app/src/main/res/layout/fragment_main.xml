@@ -25,6 +25,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textMainLayoutID"
+            style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
@@ -40,6 +41,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textMainLayoutPW"
+            style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"

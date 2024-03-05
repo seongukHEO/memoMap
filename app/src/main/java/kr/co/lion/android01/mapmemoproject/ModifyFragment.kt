@@ -1,6 +1,7 @@
 package kr.co.lion.android01.mapmemoproject
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ class ModifyFragment : Fragment() {
         setToolBar()
         setEvent()
         showResult()
+        setView()
         return fragmentModifyBinding.root
     }
 
@@ -44,8 +46,13 @@ class ModifyFragment : Fragment() {
     fun setEvent(){
         fragmentModifyBinding.apply {
             floatingActionButton2.setOnClickListener {
-                enum.showDiaLog(thirdActivity, "메모 수정", "메모를 수정하시겠습니까?"){ dialogInterface: DialogInterface, i: Int ->
-                    thirdActivity.removeFragment(FragmentName2.MODIFY_FRAGMENT)
+                var chk = checkOK()
+                if (chk == true){
+                    enum.showDiaLog(thirdActivity, "메모 수정", "메모를 수정하시겠습니까?"){ dialogInterface: DialogInterface, i: Int ->
+                        var newIntent = Intent(thirdActivity, SecondActivity::class.java)
+                        startActivity(newIntent)
+
+                    }
                 }
             }
         }

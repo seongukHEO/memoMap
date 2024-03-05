@@ -1,6 +1,7 @@
 package kr.co.lion.android01.mapmemoproject
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -22,6 +23,8 @@ class InputFragment : Fragment() {
         fragmentInputBinding = FragmentInputBinding.inflate(layoutInflater)
         thirdActivity = activity as ThirdActivity
         setToolBar()
+        setEvent()
+        setView()
 
         return fragmentInputBinding.root
     }
@@ -35,7 +38,10 @@ class InputFragment : Fragment() {
             }
             bottomAppBar.apply {
                 setNavigationIcon(R.drawable.arrow_back_24px)
-                thirdActivity.removeFragment(FragmentName2.INPUT_FRAGMENT)
+                setNavigationOnClickListener {
+                    var newIntent = Intent(thirdActivity, SecondActivity::class.java)
+                    startActivity(newIntent)
+                }
             }
 
         }
@@ -45,13 +51,22 @@ class InputFragment : Fragment() {
     fun setEvent(){
         fragmentInputBinding.apply {
             floatingActionButton.setOnClickListener {
-                thirdActivity.removeFragment(FragmentName2.INPUT_FRAGMENT)
+                var chk = checkOK()
+                if (chk == true){
+                    check123()
+                }
             }
         }
     }
     //화면 구성
     fun setView(){
         fragmentInputBinding.apply {
+
+            var simple = SimpleDateFormat("yyyy-MM-dd")
+            var date = simple.format(Date())
+
+            //date는 화면에 보여지게 한다
+            textInputDate.setText("${date}")
             //포커스 주기
             thirdActivity.showSoftInput2(textInputNickName)
 
@@ -127,9 +142,13 @@ class InputFragment : Fragment() {
             var simple = SimpleDateFormat("yyyy-MM-dd")
             var date = simple.format(Date())
 
+
             var title = textInputTitle.text.toString()
 
             var contents = textInputContents.text.toString()
+
+            var newIntent = Intent(thirdActivity, SecondActivity::class.java)
+            startActivity(newIntent)
         }
     }
 }
