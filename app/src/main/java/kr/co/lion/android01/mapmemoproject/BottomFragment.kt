@@ -2,6 +2,7 @@ package kr.co.lion.android01.mapmemoproject
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +12,13 @@ import kr.co.lion.android01.mapmemoproject.databinding.FragmentBottomBinding
 class BottomFragment : BottomSheetDialogFragment() {
 
     lateinit var fragmentBottomBinding: FragmentBottomBinding
-    lateinit var thirdActivity: ThirdActivity
+    lateinit var secondActivity: SecondActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         fragmentBottomBinding = FragmentBottomBinding.inflate(layoutInflater)
-        thirdActivity = activity as ThirdActivity
+        secondActivity = activity as SecondActivity
         showResult()
         setEvent()
         return fragmentBottomBinding.root
@@ -26,9 +27,18 @@ class BottomFragment : BottomSheetDialogFragment() {
     //내용을 보여준다
     fun showResult(){
         fragmentBottomBinding.apply {
-            textViewTitle.text = "안녕"
-            textViewDate.text
-            textViewContents.text = "안요요용옹"
+            var nickname = arguments?.getString("nickname")
+
+            //Log.d("sho1234", "${nickname}")
+            if (nickname != null){
+                var str = MemoDAO.selectOneMemo(secondActivity, nickname)
+                Log.d("seong12", "${str?.title}")
+
+                textViewTitle.text = "${str?.title}"
+                textViewDate.text = "${str?.date}"
+                textViewContents.text = "${str?.contents}"
+            }
+
         }
     }
 
@@ -36,12 +46,12 @@ class BottomFragment : BottomSheetDialogFragment() {
     fun setEvent(){
         fragmentBottomBinding.apply {
             modifyButton.setOnClickListener {
-                thirdActivity.replaceFragment(FragmentName2.MODIFY_FRAGMENT, true, true, null)
+                dismiss()
 
             }
 
             deleteButton.setOnClickListener {
-                enum.showDiaLog(thirdActivity, "메모 삭제", "메모를 삭제하시겠습니까?"){ dialogInterface: DialogInterface, i: Int ->
+                enum.showDiaLog(secondActivity, "메모 삭제", "메모를 삭제하시겠습니까?"){ dialogInterface: DialogInterface, i: Int ->
                     dismiss()
                 }
 

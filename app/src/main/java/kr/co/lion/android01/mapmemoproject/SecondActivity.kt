@@ -22,6 +22,7 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.NaverMapSdk
+import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import kr.co.lion.android01.mapmemoproject.databinding.ActivitySecondBinding
@@ -42,8 +43,6 @@ class SecondActivity : AppCompatActivity() {
 
     lateinit var locationSource: FusedLocationSource
 
-    //마커 객체
-    lateinit var myMarker:Marker
 
     //런쳐
     lateinit var thirdActivityLauncher:ActivityResultLauncher<Intent>
@@ -64,19 +63,19 @@ class SecondActivity : AppCompatActivity() {
         setToolBar()
         settingNaverMap()
         initView()
+       // showMarkerFromSQlite()
 
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient("89e2h0bkk5")
     }
 
-    //            var str2 = intent.getStringExtra("nickname")
-//            if (str2 != null){
-//                var str3 = MemoDAO.selectOneMemo(this, str2)
-//                var latitude = str3?.latitude!!
-//                var longitude = str3?.longitude!!
+//    override fun onMapReady(p0: NaverMap) {
+//        this.naverMap = naverMap
 //
-//                myMarker.position = LatLng(latitude.toDouble(), longitude.toDouble())
-//            }
+//        showMarkerFromSQlite()
+//    }
+
+
 
 
     //뷰 설정
@@ -120,6 +119,29 @@ class SecondActivity : AppCompatActivity() {
 
                     true
                 }
+            }
+        }
+    }
+
+    //SQLite에서 데이터를 가져오는 코드 작성
+    fun showMarkerFromSQlite(){
+        //sqlite에서 데이터를 가져온다
+        var nickname = intent?.getStringExtra("nickname")
+        if (nickname != null){
+            var latitude = MemoDAO.selectOneMemo(this, nickname)
+            var longitude = MemoDAO.selectOneMemo(this, nickname)
+
+            Log.d("show1234", "${latitude}, ${longitude}")
+
+
+            var markerList1 = latitude?.latitude
+            var markerList2 = longitude?.longitude
+
+            if (markerList1 != null && markerList2 != null) {
+
+                val marker = Marker()
+                marker.position = LatLng(markerList1, markerList2)
+                marker.map = naverMap
             }
         }
     }
@@ -178,8 +200,26 @@ class SecondActivity : AppCompatActivity() {
                     marker.position = latLng
                     marker.map = naverMap
                     //Log.d("test1234", "${latLng.latitude}")
+
+                    marker.setOnClickListener {
+                        var nickname = intent.getStringExtra("nickname")
+                        var bottomShowFragment = BottomFragment()
+
+                        var bundle = Bundle()
+                        bundle.putString("nickname", nickname)
+                        bundle.putDouble("latitude", latLng.latitude)
+                        bundle.putDouble("longitude", latLng.longitude)
+                        bottomShowFragment.arguments = bundle
+
+                        bottomShowFragment.show(this.supportFragmentManager, "bottomSheet")
+
+                        true
+                    }
+
+
                     var latitudelocation = latLng.latitude
                     var longitudeLocation = latLng.longitude
+
 
                     var newIntent = Intent(this@SecondActivity, ThirdActivity::class.java)
                     newIntent.putExtra("latitude",latitudelocation)
@@ -187,11 +227,6 @@ class SecondActivity : AppCompatActivity() {
                     thirdActivityLauncher.launch(newIntent)
                 }
             }
-
-            var latitude = intent.getFloatExtra("latitude", 0.0f)
-            var longitude = intent.getFloatExtra("longitude", 0.0f)
-
-            screenJob(latitude.toDouble(), longitude.toDouble())
 
 
             //단말기에 저장되어있는 위치 값을 가져온다
