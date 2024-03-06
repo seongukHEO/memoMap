@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="25dp"
-    tools:context=".BottomFragment" >
+    tools:context=".Fragment.MemoInfoFragment" >
 
     <TextView
         android:id="@+id/textViewTitle"

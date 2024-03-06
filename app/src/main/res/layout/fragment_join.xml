@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:transitionGroup="true"
-    tools:context=".JoinFragment">
+    tools:context=".Fragment.JoinFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/materialToolbar2"

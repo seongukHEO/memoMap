@@ -1,4 +1,4 @@
-package kr.co.lion.android01.mapmemoproject
+package kr.co.lion.android01.mapmemoproject.DataClassAll
 
 data class UserInfoAll (
     var nickname:String,

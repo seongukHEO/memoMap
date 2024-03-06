@@ -1,4 +1,4 @@
-package kr.co.lion.android01.mapmemoproject
+package kr.co.lion.android01.mapmemoproject.Fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -7,26 +7,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import kr.co.lion.android01.mapmemoproject.Activity.LoginActivity
+import kr.co.lion.android01.mapmemoproject.FragmentName
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.InfoDAO
+import kr.co.lion.android01.mapmemoproject.R
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentSearchIDBinding
+import kr.co.lion.android01.mapmemoproject.Util
 
 class SearchIDFragment : Fragment() {
 
     lateinit var fragmentSearchIDBinding: FragmentSearchIDBinding
-    lateinit var mainActivity: MainActivity
+    lateinit var loginActivity: LoginActivity
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         fragmentSearchIDBinding = FragmentSearchIDBinding.inflate(layoutInflater)
-        mainActivity = activity as MainActivity
+        loginActivity = activity as LoginActivity
         setEvent()
         setToolBar()
         setView()
 
         return fragmentSearchIDBinding.root
     }
+
     //툴바 설정
-    fun setToolBar(){
+    private fun setToolBar() {
         fragmentSearchIDBinding.apply {
             materialToolbar3.apply {
                 title = "아이디 찾기"
@@ -35,29 +42,30 @@ class SearchIDFragment : Fragment() {
                 setNavigationIcon(R.drawable.arrow_back_24px)
                 //클릭했을 떄
                 setNavigationOnClickListener {
-                    mainActivity.removeFragment(FragmentName.SEARCH_ID_FRAGMENT)
+                    loginActivity.removeFragment(FragmentName.SEARCH_ID_FRAGMENT)
                 }
             }
         }
     }
 
     //이벤트 설정
-    fun setEvent(){
+    private fun setEvent() {
         fragmentSearchIDBinding.apply {
             searchIdbutton2.setOnClickListener {
-                var chk = check123()
-                if (chk == true){
+                val chk = check123()
+                if (chk) {
                     checkOK()
                 }
-                enum.hideSoftInput(mainActivity)
+                Util.hideSoftInput(loginActivity)
             }
         }
     }
+
     //화면 설정
-    fun setView(){
+    private fun setView() {
         fragmentSearchIDBinding.apply {
             //포커스를 준다
-            enum.showSoftInput(textSearchIdNumber, mainActivity)
+            Util.showSoftInput(textSearchIdNumber, loginActivity)
 
             //입력할 경우 에러 메시지를 지워준다
             textSearchIdNumber.addTextChangedListener {
@@ -67,43 +75,44 @@ class SearchIDFragment : Fragment() {
     }
 
     //추가 유효성 검사
-    fun check123():Boolean{
+    private fun check123(): Boolean {
         fragmentSearchIDBinding.apply {
-            var errorView:View? = null
+            var errorView: View? = null
 
-            var number1 = textSearchIdNumber.text.toString()
-            if (number1.trim().isEmpty()){
+            val number1 = textSearchIdNumber.text.toString()
+            if (number1.trim().isEmpty()) {
                 textLayoutSearchID.error = "전화번호를 입력해주세요"
-                if (errorView == null){
-                    errorView = textSearchIdNumber
-                }
-            }else{
+                errorView = textSearchIdNumber
+
+            } else {
                 textLayoutSearchID.error = null
             }
-            if (errorView != null){
-                mainActivity.showSoftInput2(errorView)
+            if (errorView != null) {
+                loginActivity.showSoftInput2(errorView)
                 return false
-            }else{
+            } else {
                 return true
             }
         }
     }
 
     //유효성 검사
-    fun checkOK(){
+    private fun checkOK() {
         fragmentSearchIDBinding.apply {
+            val number = textSearchIdNumber.text.toString().toInt()
+            val str = InfoDAO.selectOneInfo1(loginActivity, number)
 
 
-            var number = textSearchIdNumber.text.toString().toInt()
-            var str = InfoDAO.selectOneInfo1(mainActivity, number)
-
-
-            if (number.toString().toInt() != str?.number){
-                enum.showDiaLog(mainActivity, "전화번호 오류", "이 번호로 등록된 아이디가 없습니다"){ dialogInterface: DialogInterface, i: Int ->
-                    enum.showSoftInput(textSearchIdNumber, mainActivity)
+            if (number.toString().toInt() != str?.number) {
+                Util.showDiaLog(
+                    loginActivity,
+                    "전화번호 오류",
+                    "이 번호로 등록된 아이디가 없습니다"
+                ) { dialogInterface: DialogInterface, i: Int ->
+                    Util.showSoftInput(textSearchIdNumber, loginActivity)
                 }
                 return
-            }else{
+            } else {
                 textviewSearchId.text = "아이디 : ${str?.id}"
             }
 

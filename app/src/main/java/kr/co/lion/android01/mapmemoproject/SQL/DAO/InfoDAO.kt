@@ -1,6 +1,8 @@
-package kr.co.lion.android01.mapmemoproject
+package kr.co.lion.android01.mapmemoproject.SQL.DAO
 
 import android.content.Context
+import kr.co.lion.android01.mapmemoproject.DataClassAll.UserInfo
+import kr.co.lion.android01.mapmemoproject.SQL.DBHelper
 
 class InfoDAO {
 
@@ -37,8 +39,8 @@ class InfoDAO {
                 var pw = cursor.getString(a5)
 
                 var infoModel = UserInfo(name, number, nickName, id, pw)
-                dbHelper.close()
-                cursor.close()
+                //dbHelper.close()
+                //cursor.close()
                 return infoModel
             }
             dbHelper.close()

@@ -1,4 +1,4 @@
-package kr.co.lion.android01.mapmemoproject
+package kr.co.lion.android01.mapmemoproject.Fragment
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -8,18 +8,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import kr.co.lion.android01.mapmemoproject.Activity.NaverMapActivity
+import kr.co.lion.android01.mapmemoproject.Activity.MemoActivity
+import kr.co.lion.android01.mapmemoproject.FragmentName2
+import kr.co.lion.android01.mapmemoproject.R
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentModifyBinding
+import kr.co.lion.android01.mapmemoproject.Util
 
 class ModifyFragment : Fragment() {
 
     lateinit var fragmentModifyBinding: FragmentModifyBinding
-    lateinit var thirdActivity: ThirdActivity
+    lateinit var memoActivity: MemoActivity
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         fragmentModifyBinding = FragmentModifyBinding.inflate(layoutInflater)
-        thirdActivity = activity as ThirdActivity
+        memoActivity = activity as MemoActivity
         setToolBar()
         setEvent()
         showResult()
@@ -28,7 +34,7 @@ class ModifyFragment : Fragment() {
     }
 
     //툴바 설정
-    fun setToolBar(){
+    private fun setToolBar() {
         fragmentModifyBinding.apply {
             materialToolbar9.apply {
                 title = "메모 수정"
@@ -36,20 +42,24 @@ class ModifyFragment : Fragment() {
             bottomAppBar2.apply {
                 setNavigationIcon(R.drawable.arrow_back_24px)
                 setNavigationOnClickListener {
-                    thirdActivity.removeFragment(FragmentName2.MODIFY_FRAGMENT)
+                    memoActivity.removeFragment(FragmentName2.MODIFY_FRAGMENT)
                 }
             }
         }
     }
 
     //이벤트 설정
-    fun setEvent(){
+    private fun setEvent() {
         fragmentModifyBinding.apply {
             floatingActionButton2.setOnClickListener {
                 var chk = checkOK()
-                if (chk == true){
-                    enum.showDiaLog(thirdActivity, "메모 수정", "메모를 수정하시겠습니까?"){ dialogInterface: DialogInterface, i: Int ->
-                        var newIntent = Intent(thirdActivity, SecondActivity::class.java)
+                if (chk) {
+                    Util.showDiaLog(
+                        memoActivity,
+                        "메모 수정",
+                        "메모를 수정하시겠습니까?"
+                    ) { dialogInterface: DialogInterface, i: Int ->
+                        var newIntent = Intent(memoActivity, NaverMapActivity::class.java)
                         startActivity(newIntent)
 
                     }
@@ -59,7 +69,7 @@ class ModifyFragment : Fragment() {
     }
 
     //값을 보여준다
-    fun showResult(){
+    private fun showResult() {
         fragmentModifyBinding.apply {
             textModifyNickName.setText("허성욱")
             textModifyDate.setText("2024-03-04")
@@ -69,10 +79,10 @@ class ModifyFragment : Fragment() {
     }
 
     //화면 구성
-    fun setView(){
+    private fun setView() {
         fragmentModifyBinding.apply {
             //포커스 주기
-            thirdActivity.showSoftInput2(textModifyNickName)
+            memoActivity.showSoftInput2(textModifyNickName)
 
             //에러 해결
             textModifyNickName.addTextChangedListener {
@@ -88,44 +98,43 @@ class ModifyFragment : Fragment() {
     }
 
     //유효성 검사
-    fun checkOK():Boolean{
+    private fun checkOK(): Boolean {
         fragmentModifyBinding.apply {
-            var errorView:View? = null
+            var errorView: View? = null
 
-            var nickname = textModifyNickName.text.toString()
-            if (nickname.trim().isEmpty()){
+            val nickname = textModifyNickName.text.toString()
+            if (nickname.trim().isEmpty()) {
                 textModifyLayoutNickName.error = "닉네임을 입력해주세요"
-                if (errorView == null){
-                    errorView = textModifyNickName
-                }
-            }else{
+                errorView = textModifyNickName
+
+            } else {
                 textModifyLayoutNickName.error = null
             }
 
-            var title = textModifyTitle.text.toString()
-            if (title.trim().isEmpty()){
+            val title = textModifyTitle.text.toString()
+            if (title.trim().isEmpty()) {
                 textLayoutModifyTitle.error = "제목을 입력해주세요"
-                if (errorView == null){
+                if (errorView == null) {
                     errorView = textModifyTitle
                 }
-            }else{
+            } else {
                 textLayoutModifyTitle.error = null
             }
 
-            var contents = textModifyContents.text.toString()
-            if (contents.trim().isEmpty()){
+            val contents = textModifyContents.text.toString()
+            if (contents.trim().isEmpty()) {
                 textLayoutModifyContents.error = "내용을 입력해주세요"
-                if (errorView == null){
+                if (errorView == null) {
                     errorView = textModifyContents
                 }
-            }else{
+            } else {
                 textLayoutModifyContents.error = null
             }
 
-            if (errorView != null){
-                thirdActivity.showSoftInput2(errorView)
+            if (errorView != null) {
+                memoActivity.showSoftInput2(errorView)
                 return false
-            }else{
+            } else {
                 return true
             }
         }

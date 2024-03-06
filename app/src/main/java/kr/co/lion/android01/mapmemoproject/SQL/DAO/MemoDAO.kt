@@ -1,21 +1,24 @@
-package kr.co.lion.android01.mapmemoproject
+package kr.co.lion.android01.mapmemoproject.SQL.DAO
 
 import android.content.Context
+import kr.co.lion.android01.mapmemoproject.DataClassAll.MemoInfo
+import kr.co.lion.android01.mapmemoproject.DataClassAll.UserInfoAll
+import kr.co.lion.android01.mapmemoproject.SQL.DBHelper
 
 class MemoDAO {
 
     companion object{
 
         //selectOne
-        fun selectOneMemo(context: Context, nickname:String) : MemoInfo? {
+        fun selectOneMemo(context: Context, idx:String) : MemoInfo? {
             //쿼리 생성
             var sql = """select *
                 |from MemoTable
-                |where nickname = ?
+                |where idx = ?
             """.trimMargin()
 
             //?에 들어갈 값
-            var args = arrayOf(nickname)
+            var args = arrayOf(idx)
 
             //쿼리 실행
             var dbHelper = DBHelper(context)
@@ -23,8 +26,8 @@ class MemoDAO {
 
             if (cursor.moveToNext()){
                 //순서값을 가져온다
-                var a0 = cursor.getColumnIndex("idx")
-                var a1 = cursor.getColumnIndex("nickname")
+                var idx1 = cursor.getColumnIndex("idx")
+                var a1 = cursor.getColumnIndex("nickName")
                 var a2 = cursor.getColumnIndex("date")
                 var a3 = cursor.getColumnIndex("title")
                 var a4 = cursor.getColumnIndex("contents")
@@ -32,15 +35,15 @@ class MemoDAO {
                 var a6 = cursor.getColumnIndex("longitude")
 
                 //값을 가져온다
-                var idx = cursor.getInt(a0)
-                var nickname = cursor.getString(a1)
+                var idx = cursor.getInt(idx1)
+                var nickName = cursor.getString(a1)
                 var date = cursor.getString(a2)
                 var title = cursor.getString(a3)
                 var contents = cursor.getString(a4)
                 var latitude = cursor.getDouble(a5)
                 var longitude = cursor.getDouble(a6)
 
-                var memoModel = MemoInfo(idx, nickname, date, title, contents, latitude, longitude)
+                var memoModel = MemoInfo(idx, nickName, date, title, contents, latitude, longitude)
                 dbHelper.close()
                 cursor.close()
                 return  memoModel
@@ -59,7 +62,7 @@ class MemoDAO {
             //쿼리 생성
             var sql = """select *
                 |from MemoTable
-                |order by nickname desc
+                |order by nickName desc
             """.trimMargin()
 
             //쿼리 실행
@@ -72,7 +75,7 @@ class MemoDAO {
             while (cursor.moveToNext()){
                 //순서값을 가져온다
                 var a0 = cursor.getColumnIndex("idx")
-                var a1 = cursor.getColumnIndex("nickname")
+                var a1 = cursor.getColumnIndex("nickName")
                 var a2 = cursor.getColumnIndex("date")
                 var a3 = cursor.getColumnIndex("title")
                 var a4 = cursor.getColumnIndex("contents")
@@ -81,14 +84,14 @@ class MemoDAO {
 
                 //값을 가져온다
                 var idx = cursor.getInt(a0)
-                var nickname = cursor.getString(a1)
+                var nickName = cursor.getString(a1)
                 var date = cursor.getString(a2)
                 var title = cursor.getString(a3)
                 var contents = cursor.getString(a4)
                 var latitude = cursor.getDouble(a5)
                 var longitude = cursor.getDouble(a6)
 
-                var memoModel = MemoInfo(idx, nickname, date, title, contents, latitude, longitude)
+                var memoModel = MemoInfo(idx, nickName, date, title, contents, latitude, longitude)
                 memoList.add(memoModel)
             }
             dbHelper.close()
@@ -102,7 +105,7 @@ class MemoDAO {
         fun insertMemo1(context: Context, memoInfo: MemoInfo){
             //쿼리 생성
             var sql = """insert into MemoTable
-                |(nickname, date, title, contents, latitude, longitude)
+                |(nickName, date, title, contents, latitude, longitude)
                 |values(?, ?, ?, ?, ?, ?)
             """.trimMargin()
 
@@ -112,6 +115,7 @@ class MemoDAO {
             //쿼리 실행
             var dbHelper = DBHelper(context)
             dbHelper.writableDatabase.execSQL(sql, args)
+            //Log.d("show3434","${result}" )
             dbHelper.close()
         }
 
@@ -138,12 +142,12 @@ class MemoDAO {
         fun updateMemo(context: Context, memoInfo: MemoInfo){
             //쿼리 생성
             var sql = """update MemoTable
-                |set nickname = ?, date = ?, title = ?, contents = ?, latitude = ?, longitude = ?
+                |set nickName = ?, date = ?, title = ?, contents = ?, latitude = ?, longitude = ?
                 |where idx = ?
             """.trimMargin()
 
             //?에 들어갈 값
-            var args = arrayOf(memoInfo.date, memoInfo.title, memoInfo.contents, memoInfo.latitude, memoInfo.longitude, memoInfo.idx)
+            var args = arrayOf(memoInfo.nickName, memoInfo.date, memoInfo.title, memoInfo.contents, memoInfo.latitude, memoInfo.longitude, memoInfo.idx)
 
             //쿼리 실행
             var dbHelper = DBHelper(context)
@@ -171,11 +175,11 @@ class MemoDAO {
         }
 
         fun getUserAllInfo(context: Context, nickName: String) : UserInfoAll? {
-            var sql = """select InfoTable.nickname, InfoTable.id, MemoTable.nickname, MemoTable.date, MemoTable.title, MemoTable.contents, 
+            var sql = """select InfoTable.nickName, InfoTable.id, MemoTable.nickName, MemoTable.date, MemoTable.title, MemoTable.contents, 
                 MemoTable.latitude, MemoTable.longitude
                 From InfoTable
-                Left Join MemeTable ON InfoTable.nickname = MemoTable.nickname
-                where InfoTable.nickname = ?
+                Left Join MemeTable ON InfoTable.nickName = MemoTable.nickName
+                where InfoTable.nickName = ?
             """.trimMargin()
 
             //?에 들어갈 값
@@ -184,10 +188,10 @@ class MemoDAO {
             var dbHelper = DBHelper(context)
             var cursor = dbHelper.writableDatabase.rawQuery(sql , args)
 
-            var userInfoAll:UserInfoAll? = null
+            var userInfoAll: UserInfoAll? = null
 
             if (cursor.moveToNext()){
-                var a1 = cursor.getColumnIndex("nickname")
+                var a1 = cursor.getColumnIndex("nickName")
                 var a2 = cursor.getColumnIndex("id")
                 var a3 = cursor.getColumnIndex("date")
                 var a4 = cursor.getColumnIndex("title")
@@ -195,7 +199,7 @@ class MemoDAO {
                 var a6 = cursor.getColumnIndex("latitude")
                 var a7 = cursor.getColumnIndex("longitude")
 
-                var nickname = cursor.getString(a1)
+                var nickName = cursor.getString(a1)
                 var id = cursor.getString(a2)
                 var date = cursor.getString(a3)
                 var title = cursor.getString(a4)
@@ -203,7 +207,7 @@ class MemoDAO {
                 var latitude = cursor.getDouble(a6)
                 var longitude = cursor.getDouble(a7)
 
-                userInfoAll = UserInfoAll(nickname, id, date, title, contents, latitude, longitude)
+                userInfoAll = UserInfoAll(nickName, id, date, title, contents, latitude, longitude)
             }
             cursor.close()
             dbHelper.close()

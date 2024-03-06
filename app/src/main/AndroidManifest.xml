@@ -17,13 +17,13 @@
         android:theme="@style/AppTheme.Starting"
         tools:targetApi="31">
         <activity
-            android:name=".ThirdActivity"
+            android:name=".Activity.MemoActivity"
             android:exported="false" />
         <activity
-            android:name=".SecondActivity"
+            android:name=".Activity.NaverMapActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

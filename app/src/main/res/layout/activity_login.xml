@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:transitionGroup="true"
-    tools:context=".MainActivity">
+    tools:context=".Activity.LoginActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mainContainer"

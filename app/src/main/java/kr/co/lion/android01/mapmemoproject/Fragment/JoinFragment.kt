@@ -1,4 +1,4 @@
-package kr.co.lion.android01.mapmemoproject
+package kr.co.lion.android01.mapmemoproject.Fragment
 
 import android.animation.Animator
 import android.content.DialogInterface
@@ -8,19 +8,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import kr.co.lion.android01.mapmemoproject.Activity.LoginActivity
+import kr.co.lion.android01.mapmemoproject.FragmentName
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.InfoDAO
+import kr.co.lion.android01.mapmemoproject.DataClassAll.UserInfo
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentJoinBinding
+import kr.co.lion.android01.mapmemoproject.Util
 import java.util.regex.Pattern
 
 class JoinFragment : Fragment() {
 
     lateinit var fragmentJoinBinding: FragmentJoinBinding
-    lateinit var mainActivity: MainActivity
+    lateinit var loginActivity: LoginActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         fragmentJoinBinding = FragmentJoinBinding.inflate(layoutInflater)
-        mainActivity = activity as MainActivity
+        loginActivity = activity as LoginActivity
         setEvent()
         setToolBar()
         initView()
@@ -29,7 +34,7 @@ class JoinFragment : Fragment() {
     }
 
     //툴바 설정
-    fun setToolBar(){
+    private fun setToolBar(){
         fragmentJoinBinding.apply {
             materialToolbar2.apply {
                 title = "회원가입"
@@ -38,10 +43,10 @@ class JoinFragment : Fragment() {
     }
 
     //입력요소 설정
-    fun initView(){
+    private fun initView(){
         fragmentJoinBinding.apply {
             //우선 화면이 시작되면 포커스를 준다
-            mainActivity.showSoftInput2(textJoinName)
+            loginActivity.showSoftInput2(textJoinName)
 
             //에러 메시지가 보여지는 상황일 경우를 대비하여 무언가를 입력하면 에러 메시지를 없앤다
 
@@ -73,34 +78,33 @@ class JoinFragment : Fragment() {
     }
 
     //이벤트 설정
-    fun setEvent(){
+    private fun setEvent(){
         fragmentJoinBinding.apply {
             joinButton.setOnClickListener {
                 var chk = checkOK()
-                if (chk == true){
+                if (chk){
                     check123()
-                    enum.hideSoftInput(mainActivity)
+                    Util.hideSoftInput(loginActivity)
                 }
             }
         }
     }
 
     //입력 유효성 검사
-    fun checkOK():Boolean{
+    private fun checkOK():Boolean{
         fragmentJoinBinding.apply {
             //입력하지 않은 입력 요소 중 가장 위에 있는 View를 담을 변수
             var errorView:View? = null
 
-            var name = textJoinName.text.toString()
+            val name = textJoinName.text.toString()
             if (name.trim().isEmpty()){
                 textJoinLayoutName.error = "이름을 입력해주세요"
-                if (errorView == null){
-                    errorView = textJoinName
-                }
+                errorView = textJoinName
+
             }else{
                 textJoinLayoutName.error = null
             }
-            var number1 = textJoinNumber.text.toString()
+            val number1 = textJoinNumber.text.toString()
             if (number1.trim().isEmpty()){
                 textJoinLayoutNumber.error = "전화 번호를 입력해주세요"
                 if (errorView == null){
@@ -110,7 +114,7 @@ class JoinFragment : Fragment() {
                 textJoinLayoutNumber.error = null
             }
 
-            var nickname = textJoinNickName.text.toString()
+            val nickname = textJoinNickName.text.toString()
             if (nickname.trim().isEmpty()){
                 textJoinLayoutNickName.error = "닉네임을 입력해주세요"
                 if (errorView == null){
@@ -120,7 +124,7 @@ class JoinFragment : Fragment() {
                 textJoinLayoutNickName.error = null
             }
 
-            var id = textJoinID.text.toString()
+            val id = textJoinID.text.toString()
             if (id.trim().isEmpty()){
                 textJoinLayoutID.error = "아이디를 입력해주세요"
                 if (errorView == null){
@@ -130,7 +134,7 @@ class JoinFragment : Fragment() {
                 textJoinLayoutID.error = null
             }
 
-            var pw = textJoinPW.text.toString()
+            val pw = textJoinPW.text.toString()
             if (pw.trim().isEmpty()){
                 textJoinLayoutPW.error = "비밀번호를 입력해주세요"
                 if (errorView == null){
@@ -139,7 +143,7 @@ class JoinFragment : Fragment() {
             }else{
                 textJoinLayoutPW.error = null
             }
-            var checkPw = textJoinCheckPW.text.toString()
+            val checkPw = textJoinCheckPW.text.toString()
             if (checkPw.trim().isEmpty()){
                 textJoinLayoutCheckPW.error = "비밀번호를 입력해주세요"
                 if (errorView == null){
@@ -152,7 +156,7 @@ class JoinFragment : Fragment() {
 
             //비어있는 입력 요소가 있다면 비어있는 입력 요소에 포커스를 준다
             if (errorView != null){
-                mainActivity.showSoftInput2(errorView)
+                loginActivity.showSoftInput2(errorView)
                 return  false
             }else{
                 return true
@@ -161,51 +165,67 @@ class JoinFragment : Fragment() {
     }
 
     //추가로 유효성 검사
-    fun check123(){
+    private fun check123(){
         fragmentJoinBinding.apply {
-            var name = textJoinName.text.toString()
-            var number = textJoinNumber.text.toString().toInt()
+            val name = textJoinName.text.toString()
+            val number = textJoinNumber.text.toString().toInt()
 
-            var nickName = textJoinNickName.text.toString()
-            var str = InfoDAO.selectOneInfo(mainActivity, nickName)
+            val nickName = textJoinNickName.text.toString()
+            val str = InfoDAO.selectOneInfo(loginActivity, nickName)
             if (nickName == str?.nickName){
-                enum.showDiaLog(mainActivity, "닉네임 중복 오류", "현재 사용중인 닉네임입니다"){ dialogInterface: DialogInterface, i: Int ->
-                    enum.showSoftInput(textJoinNickName, mainActivity)
+                Util.showDiaLog(
+                    loginActivity,
+                    "닉네임 중복 오류",
+                    "현재 사용중인 닉네임입니다"
+                ) { dialogInterface: DialogInterface, i: Int ->
+                    Util.showSoftInput(textJoinNickName, loginActivity)
                 }
                 return
             }
 
-            var id = textJoinID.text.toString()
-            var checkId = InfoDAO.selectOneInfo2(mainActivity, id)
+            val id = textJoinID.text.toString()
+            val checkId = InfoDAO.selectOneInfo2(loginActivity, id)
             if (id == checkId?.id){
-                enum.showDiaLog(mainActivity, "아이디 중복 오류", "현재 사용중인 아이디입니다"){ dialogInterface: DialogInterface, i: Int ->
-                    enum.showSoftInput(textJoinID, mainActivity)
+                Util.showDiaLog(
+                    loginActivity,
+                    "아이디 중복 오류",
+                    "현재 사용중인 아이디입니다"
+                ) { dialogInterface: DialogInterface, i: Int ->
+                    Util.showSoftInput(textJoinID, loginActivity)
 
                 }
                 return
             }
 
 
-            var pw = textJoinPW.text.toString()
-            var special123 = Pattern.compile("[!@#$%^&*+?><~`=)(}{]")
-            var matchers = special123.matcher(pw)
+            val pw = textJoinPW.text.toString()
+            val special123 = Pattern.compile("[!@#$%^&*+?><~`=)(}{]")
+            val matchers = special123.matcher(pw)
             if (!matchers.find()){
-                enum.showDiaLog(mainActivity, "특수문자 입력 오류", "비밀번호에는 특수문자를 포함해주세요"){ dialogInterface: DialogInterface, i: Int ->
-                    enum.showSoftInput(textJoinPW, mainActivity)
+                Util.showDiaLog(
+                    loginActivity,
+                    "특수문자 입력 오류",
+                    "비밀번호에는 특수문자를 포함해주세요"
+                ) { dialogInterface: DialogInterface, i: Int ->
+                    Util.showSoftInput(textJoinPW, loginActivity)
                 }
                 return
             }
 
-            var checkPw = textJoinCheckPW.text.toString()
+            val checkPw = textJoinCheckPW.text.toString()
             if (checkPw != pw){
-                enum.showDiaLog(mainActivity, "비밀번호 확인 오류", "비밀번호가 일치하지 않습니다"){ dialogInterface: DialogInterface, i: Int ->
-                    enum.showSoftInput(textJoinCheckPW, mainActivity)
+                Util.showDiaLog(
+                    loginActivity,
+                    "비밀번호 확인 오류",
+                    "비밀번호가 일치하지 않습니다"
+                ) { dialogInterface: DialogInterface, i: Int ->
+                    Util.showSoftInput(textJoinCheckPW, loginActivity)
                 }
                 return
             }
 
-            var infoModel = UserInfo(name, number, nickName, id, pw)
-            InfoDAO.insertInfo(mainActivity, infoModel)
+            val infoModel = UserInfo(name, number, nickName, id, pw)
+            InfoDAO.insertInfo(loginActivity, infoModel)
 
             lottieLayout.visibility = View.VISIBLE
 
@@ -224,7 +244,7 @@ class JoinFragment : Fragment() {
                     }
 
                     override fun onAnimationEnd(animation: Animator) {
-                        mainActivity.removeFragment(FragmentName.JOIN_FRAGMENT)
+                        loginActivity.removeFragment(FragmentName.JOIN_FRAGMENT)
 
                     }
 

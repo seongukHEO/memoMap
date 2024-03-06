@@ -1,4 +1,4 @@
-package kr.co.lion.android01.mapmemoproject
+package kr.co.lion.android01.mapmemoproject.Fragment
 
 import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
@@ -10,20 +10,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import kr.co.lion.android01.mapmemoproject.Activity.NaverMapActivity
+import kr.co.lion.android01.mapmemoproject.Activity.MemoActivity
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.InfoDAO
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.MemoDAO
+import kr.co.lion.android01.mapmemoproject.DataClassAll.MemoInfo
+import kr.co.lion.android01.mapmemoproject.R
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentInputBinding
+import kr.co.lion.android01.mapmemoproject.Util
 import java.text.SimpleDateFormat
 import java.util.Date
 
 class InputFragment : Fragment() {
 
     lateinit var fragmentInputBinding: FragmentInputBinding
-    lateinit var thirdActivity: ThirdActivity
+    lateinit var memoActivity: MemoActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         fragmentInputBinding = FragmentInputBinding.inflate(layoutInflater)
-        thirdActivity = activity as ThirdActivity
+        memoActivity = activity as MemoActivity
         setToolBar()
         setEvent()
         setView()
@@ -32,7 +39,7 @@ class InputFragment : Fragment() {
     }
 
     //툴바 설정
-    fun setToolBar(){
+    private fun setToolBar(){
         fragmentInputBinding.apply {
             materialToolbar6.apply {
                 title = "메모 추가"
@@ -41,7 +48,7 @@ class InputFragment : Fragment() {
             bottomAppBar.apply {
                 setNavigationIcon(R.drawable.arrow_back_24px)
                 setNavigationOnClickListener {
-                    var newIntent = Intent(thirdActivity, SecondActivity::class.java)
+                    val newIntent = Intent(memoActivity, NaverMapActivity::class.java)
                     startActivity(newIntent)
                 }
             }
@@ -50,27 +57,27 @@ class InputFragment : Fragment() {
     }
 
     //이벤트 설정
-    fun setEvent(){
+    private fun setEvent(){
         fragmentInputBinding.apply {
             floatingActionButton.setOnClickListener {
-                var chk = checkOK()
-                if (chk == true){
+                val chk = checkOK()
+                if (chk){
                     check123()
                 }
             }
         }
     }
     //화면 구성
-    fun setView(){
+    private fun setView(){
         fragmentInputBinding.apply {
 
-            var simple = SimpleDateFormat("yyyy-MM-dd")
-            var date = simple.format(Date())
+            val simple = SimpleDateFormat("yyyy-MM-dd")
+            val date = simple.format(Date())
 
             //date는 화면에 보여지게 한다
-            textInputDate.setText("${date}")
+            textInputDate.setText(date)
             //포커스 주기
-            thirdActivity.showSoftInput2(textInputNickName)
+            memoActivity.showSoftInput2(textInputNickName)
 
             //에러 해결
             textInputNickName.addTextChangedListener {
@@ -86,21 +93,20 @@ class InputFragment : Fragment() {
     }
 
     //유효성 검사1
-    fun checkOK():Boolean{
+    private fun checkOK():Boolean{
         fragmentInputBinding.apply {
             var errorView:View? = null
 
-            var nickname = textInputNickName.text.toString()
+            val nickname = textInputNickName.text.toString()
             if (nickname.trim().isEmpty()){
                 textInputLayoutNickName.error = "닉네임을 입력해주세요"
-                if (errorView == null){
-                    errorView = textInputNickName
-                }
+                errorView = textInputNickName
+
             }else{
                 textInputLayoutNickName.error = null
             }
 
-            var title = textInputTitle.text.toString()
+            val title = textInputTitle.text.toString()
             if (title.trim().isEmpty()){
                 textLayoutInputTitle.error = "제목을 입력해주세요"
                 if (errorView == null){
@@ -110,7 +116,7 @@ class InputFragment : Fragment() {
                 textLayoutInputTitle.error = null
             }
 
-            var contents = textInputContents.text.toString()
+            val contents = textInputContents.text.toString()
             if (contents.trim().isEmpty()){
                 textLayoutInputContents.error = "내용을 입력해주세요"
                 if (errorView == null){
@@ -121,7 +127,7 @@ class InputFragment : Fragment() {
             }
 
             if (errorView != null){
-                thirdActivity.showSoftInput2(errorView)
+                memoActivity.showSoftInput2(errorView)
                 return false
             }else{
                 return true
@@ -129,41 +135,46 @@ class InputFragment : Fragment() {
         }
     }
     //유효성 검사2
-    fun check123(){
+    private fun check123(){
         fragmentInputBinding.apply {
-            var nickname = textInputNickName.text.toString()
-            var str = InfoDAO.selectOneInfo(thirdActivity, nickname)
+            val nickname = textInputNickName.text.toString()
+            val str = InfoDAO.selectOneInfo(memoActivity, nickname)
 
             if (nickname != str?.nickName){
-                enum.showDiaLog(thirdActivity, "닉네임 오류", "닉네임을 확인해주세요"){ dialogInterface: DialogInterface, i: Int ->
-                    enum.showSoftInput(textInputNickName, thirdActivity)
+                Util.showDiaLog(
+                    memoActivity,
+                    "닉네임 오류",
+                    "닉네임을 확인해주세요"
+                ) { dialogInterface: DialogInterface, i: Int ->
+                    Util.showSoftInput(textInputNickName, memoActivity)
                 }
                 return
             }
-            var latitude = arguments?.getDouble("latitude")!!
-            var longitude = arguments?.getDouble("longitude")!!
+            val latitude = arguments?.getDouble("latitude")!!
+            val longitude = arguments?.getDouble("longitude")!!
 
-            Log.d("test1234", "${latitude}, ${longitude}")
+            //Log.d("test1234", "${latitude}, ${longitude}")
 
-            var simple = SimpleDateFormat("yyyy-MM-dd")
-            var date = simple.format(Date())
-
-
-            var title = textInputTitle.text.toString()
-
-            var contents = textInputContents.text.toString()
-
-            var memoList = MemoInfo(1, nickname, date, title, contents, latitude, longitude)
+            val simple = SimpleDateFormat("yyyy-MM-dd")
+            val date = simple.format(Date())
 
 
-            MemoDAO.insertMemo1(thirdActivity, memoList)
+            val title = textInputTitle.text.toString()
 
-            var newIntent = Intent(thirdActivity, SecondActivity::class.java)
+            val contents = textInputContents.text.toString()
+
+            val memoList = MemoInfo(1, nickname, date, title, contents, latitude, longitude)
+
+
+            MemoDAO.insertMemo1(memoActivity, memoList)
+
+            val newIntent = Intent(memoActivity, NaverMapActivity::class.java)
             newIntent.putExtra("nickname", nickname)
             newIntent.putExtra("latitude", latitude)
             newIntent.putExtra("longitude", longitude)
-            thirdActivity.setResult(RESULT_OK, newIntent)
-            thirdActivity.finish()
+            memoActivity.setResult(RESULT_OK, newIntent)
+            memoActivity.finish()
+
         }
     }
 }

@@ -1,4 +1,4 @@
-package kr.co.lion.android01.mapmemoproject
+package kr.co.lion.android01.mapmemoproject.SQL
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -20,9 +20,9 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, "Info.db", null, 1)
         val sql2 = """create table MemoTable
             |(idx integer primary key autoincrement,
             |nickName text not null,
-            |date text not null,
-            |title not null,
-            |contents not null,
+            |date Date not null,
+            |title text not null,
+            |contents text not null,
             |latitude REAL,
             |longitude REAL)
         """.trimMargin()
