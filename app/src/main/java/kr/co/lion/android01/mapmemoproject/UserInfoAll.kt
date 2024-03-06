@@ -6,6 +6,6 @@ data class UserInfoAll (
     var date:String,
     var title:String,
     var contents:String,
-    var latitude:Float,
-    var longitude:Float
+    var latitude:Double,
+    var longitude:Double
 )

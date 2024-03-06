@@ -25,12 +25,13 @@ data class UserInfo(
 )
 
 data class MemoInfo(
+    var idx:Int,
     var nickName: String,
     var date:String,
     var title:String,
     var contents:String,
-    var latitude:Float,
-    var longitude:Float
+    var latitude:Double,
+    var longitude:Double
 )
 
 

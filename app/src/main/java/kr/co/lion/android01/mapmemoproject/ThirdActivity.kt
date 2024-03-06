@@ -3,6 +3,7 @@ package kr.co.lion.android01.mapmemoproject
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -27,12 +28,13 @@ class ThirdActivity : AppCompatActivity() {
         activityThirdBinding = ActivityThirdBinding.inflate(layoutInflater)
         setContentView(activityThirdBinding.root)
 
-        var str = intent.getFloatExtra("latitude", 0.0f)
-        var str2 = intent.getFloatExtra("longitude", 0.0f)
+        var str = intent.getDoubleExtra("latitude", 0.00)
+        var str2 = intent.getDoubleExtra("longitude", 0.00)
         if (str != null || str2 != null) {
             var bundle = Bundle()
-            bundle.putFloat("latitude", str)
-            bundle.putFloat("longitude", str2)
+            Log.d("test1234", "${str}")
+            bundle.putDouble("latitude", str)
+            bundle.putDouble("longitude", str2)
 
             replaceFragment(FragmentName2.INPUT_FRAGMENT, false, false, bundle)
         }else{

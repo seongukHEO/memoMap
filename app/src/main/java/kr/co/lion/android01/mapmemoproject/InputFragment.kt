@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -139,8 +140,10 @@ class InputFragment : Fragment() {
                 }
                 return
             }
-            var latitude = arguments?.getFloat("latitude")!!
-            var longitude = arguments?.getFloat("longitude")!!
+            var latitude = arguments?.getDouble("latitude")!!
+            var longitude = arguments?.getDouble("longitude")!!
+
+            Log.d("test1234", "${latitude}, ${longitude}")
 
             var simple = SimpleDateFormat("yyyy-MM-dd")
             var date = simple.format(Date())
@@ -150,16 +153,17 @@ class InputFragment : Fragment() {
 
             var contents = textInputContents.text.toString()
 
-            var memoList = MemoInfo(nickname, date, title, contents, latitude, longitude)
+            var memoList = MemoInfo(1, nickname, date, title, contents, latitude, longitude)
 
 
-            MemoDAO.insertMemo(thirdActivity, memoList)
+            MemoDAO.insertMemo1(thirdActivity, memoList)
 
             var newIntent = Intent(thirdActivity, SecondActivity::class.java)
             newIntent.putExtra("nickname", nickname)
             newIntent.putExtra("latitude", latitude)
-            newIntent.putExtra("longtiude", longitude)
-            startActivity(newIntent)
+            newIntent.putExtra("longitude", longitude)
+            thirdActivity.setResult(RESULT_OK, newIntent)
+            thirdActivity.finish()
         }
     }
 }

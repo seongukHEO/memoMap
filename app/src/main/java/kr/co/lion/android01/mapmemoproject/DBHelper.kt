@@ -10,15 +10,16 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, "Info.db", null, 1)
         var sql = """create table InfoTable
             |(name text not null,
             |number integer not null,
-            |nickName text primary key,
-            |id text not null,
+            |nickName text not null,
+            |id text primary key,
             |pw text not null)
         """.trimMargin()
         db?.execSQL(sql)
 
         //테이블 생성
         val sql2 = """create table MemoTable
-            |(nickName text primary key,
+            |(idx integer primary key autoincrement,
+            |nickName text not null,
             |date text not null,
             |title not null,
             |contents not null,

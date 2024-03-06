@@ -23,6 +23,7 @@ class MemoDAO {
 
             if (cursor.moveToNext()){
                 //순서값을 가져온다
+                var a0 = cursor.getColumnIndex("idx")
                 var a1 = cursor.getColumnIndex("nickname")
                 var a2 = cursor.getColumnIndex("date")
                 var a3 = cursor.getColumnIndex("title")
@@ -31,14 +32,15 @@ class MemoDAO {
                 var a6 = cursor.getColumnIndex("longitude")
 
                 //값을 가져온다
+                var idx = cursor.getInt(a0)
                 var nickname = cursor.getString(a1)
                 var date = cursor.getString(a2)
                 var title = cursor.getString(a3)
                 var contents = cursor.getString(a4)
-                var latitude = cursor.getFloat(a5)
-                var longitude = cursor.getFloat(a6)
+                var latitude = cursor.getDouble(a5)
+                var longitude = cursor.getDouble(a6)
 
-                var memoModel = MemoInfo(nickname, date, title, contents, latitude, longitude)
+                var memoModel = MemoInfo(idx, nickname, date, title, contents, latitude, longitude)
                 dbHelper.close()
                 cursor.close()
                 return  memoModel
@@ -69,6 +71,7 @@ class MemoDAO {
 
             while (cursor.moveToNext()){
                 //순서값을 가져온다
+                var a0 = cursor.getColumnIndex("idx")
                 var a1 = cursor.getColumnIndex("nickname")
                 var a2 = cursor.getColumnIndex("date")
                 var a3 = cursor.getColumnIndex("title")
@@ -77,14 +80,15 @@ class MemoDAO {
                 var a6 = cursor.getColumnIndex("longitude")
 
                 //값을 가져온다
+                var idx = cursor.getInt(a0)
                 var nickname = cursor.getString(a1)
                 var date = cursor.getString(a2)
                 var title = cursor.getString(a3)
                 var contents = cursor.getString(a4)
-                var latitude = cursor.getFloat(a5)
-                var longitude = cursor.getFloat(a6)
+                var latitude = cursor.getDouble(a5)
+                var longitude = cursor.getDouble(a6)
 
-                var memoModel = MemoInfo(nickname, date, title, contents, latitude, longitude)
+                var memoModel = MemoInfo(idx, nickname, date, title, contents, latitude, longitude)
                 memoList.add(memoModel)
             }
             dbHelper.close()
@@ -95,7 +99,7 @@ class MemoDAO {
 
 
         //insert
-        fun insertMemo(context: Context, memoInfo: MemoInfo){
+        fun insertMemo1(context: Context, memoInfo: MemoInfo){
             //쿼리 생성
             var sql = """insert into MemoTable
                 |(nickname, date, title, contents, latitude, longitude)
@@ -111,6 +115,22 @@ class MemoDAO {
             dbHelper.close()
         }
 
+        //위 경도를 저장한다
+        fun insertMemo2(context: Context, latitude:Double, longitude:Double) {
+            var sql = """insert into MemoTable
+                |(latitude, longitude)
+                |values(?, ?)
+            """.trimMargin()
+
+            //?에 들어갈 값
+            var args = arrayOf(latitude, longitude)
+
+            //쿼리 실행
+            var dbHelper = DBHelper(context)
+            dbHelper.writableDatabase.execSQL(sql, args)
+            dbHelper.close()
+        }
+
 
 
 
@@ -118,12 +138,12 @@ class MemoDAO {
         fun updateMemo(context: Context, memoInfo: MemoInfo){
             //쿼리 생성
             var sql = """update MemoTable
-                |set date = ?, title = ?, contents = ?, latitude = ?, longitude = ?
-                |where nickname = ?
+                |set nickname = ?, date = ?, title = ?, contents = ?, latitude = ?, longitude = ?
+                |where idx = ?
             """.trimMargin()
 
             //?에 들어갈 값
-            var args = arrayOf(memoInfo.date, memoInfo.title, memoInfo.contents, memoInfo.latitude, memoInfo.longitude)
+            var args = arrayOf(memoInfo.date, memoInfo.title, memoInfo.contents, memoInfo.latitude, memoInfo.longitude, memoInfo.idx)
 
             //쿼리 실행
             var dbHelper = DBHelper(context)
@@ -180,8 +200,8 @@ class MemoDAO {
                 var date = cursor.getString(a3)
                 var title = cursor.getString(a4)
                 var contents = cursor.getString(a5)
-                var latitude = cursor.getFloat(a6)
-                var longitude = cursor.getFloat(a7)
+                var latitude = cursor.getDouble(a6)
+                var longitude = cursor.getDouble(a7)
 
                 userInfoAll = UserInfoAll(nickname, id, date, title, contents, latitude, longitude)
             }

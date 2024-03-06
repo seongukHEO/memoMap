@@ -63,7 +63,7 @@ class SecondActivity : AppCompatActivity() {
         requestPermissions(permissionList, 0)
         setToolBar()
         settingNaverMap()
-        //initView()
+        initView()
 
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient("89e2h0bkk5")
@@ -85,10 +85,12 @@ class SecondActivity : AppCompatActivity() {
         thirdActivityLauncher = registerForActivityResult(contract){
             if (it.resultCode == RESULT_OK){
                 if (it.data != null){
-                    var latitude = it?.data!!.getFloatExtra("latitude", 0.0f)
-                    var longitude = it?.data!!.getFloatExtra("longitude", 0.0f)
+                    var latitude = it?.data!!.getDoubleExtra("latitude", 0.00)
+                    var longitude = it?.data!!.getDoubleExtra("longitude", 0.00)
 
-                    screenJob(latitude.toDouble(), longitude.toDouble())
+                    Log.d("test1234", "${latitude}, ${longitude}")
+
+                    screenJob(latitude, longitude)
                 }
             }
         }
@@ -182,7 +184,7 @@ class SecondActivity : AppCompatActivity() {
                     var newIntent = Intent(this@SecondActivity, ThirdActivity::class.java)
                     newIntent.putExtra("latitude",latitudelocation)
                     newIntent.putExtra("longitude", longitudeLocation)
-                    startActivity(newIntent)
+                    thirdActivityLauncher.launch(newIntent)
                 }
             }
 
