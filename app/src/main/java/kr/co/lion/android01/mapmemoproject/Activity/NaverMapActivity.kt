@@ -9,6 +9,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -21,11 +22,13 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.NaverMapSdk
+import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import kr.co.lion.android01.mapmemoproject.DataClassAll.MemoInfo
 import kr.co.lion.android01.mapmemoproject.Fragment.MemoInfoFragment
 import kr.co.lion.android01.mapmemoproject.R
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.MemoDAO
 import kr.co.lion.android01.mapmemoproject.Util
 import kr.co.lion.android01.mapmemoproject.databinding.ActivityNaverMapBinding
 
@@ -55,7 +58,7 @@ class NaverMapActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
-    var allMemo:List<MemoInfo>? = null
+    lateinit var allMemo:List<MemoInfo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,13 +68,28 @@ class NaverMapActivity : AppCompatActivity() {
         activityNaverMapBinding = ActivityNaverMapBinding.inflate(layoutInflater)
         setContentView(activityNaverMapBinding.root)
         requestPermissions(permissionList, 0)
+        MemoDAO.selectAllMemo(this)
+        initialization()
         setToolBar()
         settingNaverMap()
         initView()
 
 
+
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient("89e2h0bkk5")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initialization()
+    }
+
+    //초기화 작업
+    private fun initialization(){
+        allMemo = MemoDAO.selectAllMemo(this)
+
+        Log.d("seong7182", "${allMemo}")
     }
 
     //뷰 설정
@@ -88,10 +106,10 @@ class NaverMapActivity : AppCompatActivity() {
             }
         }
     }
-    private fun getUserMemo(latitude: Double, longitude: Double): Int? {
-        allMemo?.forEach {
+    private fun getUserMemo(latitude: Double, longitude: Double): MemoInfo? {
+        allMemo.forEach {
             if (it.latitude == latitude && it.longitude == longitude){
-                return it.idx
+                return it
             }
         }
         return null
@@ -183,17 +201,22 @@ class NaverMapActivity : AppCompatActivity() {
                     marker.map = naverMap
                     //Log.d("test1234", "${latLng.latitude}")
 
+
                     marker.setOnClickListener {
-                        val nickname = intent.getStringExtra("nickname")
-                        val bottomShowFragment = MemoInfoFragment()
+                        val getData = getUserMemo(latLng.latitude, latLng.longitude)
+                        if (getData != null) {
+                            val bottomShowFragment = MemoInfoFragment()
 
-                        val bundle = Bundle()
-                        bundle.putString("nickname", nickname)
-                        bundle.putDouble("latitude", latLng.latitude)
-                        bundle.putDouble("longitude", latLng.longitude)
-                        bottomShowFragment.arguments = bundle
+                            val bundle = Bundle()
+                            bundle.putInt("idx", getData.idx)
+                            bottomShowFragment.arguments = bundle
 
-                        bottomShowFragment.show(this.supportFragmentManager, "bottomSheet")
+                            bottomShowFragment.show(this.supportFragmentManager, "bottomSheet")
+                        }else{
+                            Util.showDiaLog(this, "네트웤", "오류"){ dialogInterface: DialogInterface, i: Int ->
+
+                            }
+                        }
 
                         true
                     }
@@ -201,7 +224,6 @@ class NaverMapActivity : AppCompatActivity() {
 
                     val latitudelocation = latLng.latitude
                     val longitudeLocation = latLng.longitude
-
 
                     val newIntent = Intent(this@NaverMapActivity, MemoActivity::class.java)
                     newIntent.putExtra("latitude", latitudelocation)
@@ -281,6 +303,7 @@ class NaverMapActivity : AppCompatActivity() {
     companion object {
         val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
+
 
 
 }
