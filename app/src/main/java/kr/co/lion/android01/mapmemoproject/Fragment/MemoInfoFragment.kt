@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kr.co.lion.android01.mapmemoproject.Activity.NaverMapActivity
 import kr.co.lion.android01.mapmemoproject.SQL.DAO.InfoDAO
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.MemoDAO
 import kr.co.lion.android01.mapmemoproject.Util
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentMemoInfoBinding
 
@@ -31,25 +32,15 @@ class MemoInfoFragment : BottomSheetDialogFragment() {
     //내용을 보여준다
     private fun showResult() {
         fragmentMemoInfoBinding.apply {
-            val nickname = arguments?.getString("nickname")!!
+            val getIdx = arguments?.getInt("idx")
+            if (getIdx != null){
+                val idx = MemoDAO.selectOneMemo(naverMapActivity, getIdx)
 
-            //var str = MemoDAO.selectOneMemo(secondActivity, nickname)
+                textViewTitle.text = "${idx?.title}"
+                textViewDate.text = "${idx?.date}"
+                textViewContents.text = "${idx?.contents}"
+            }
 
-            //Log.d("show123", "${nickname}")
-
-            val str = InfoDAO.selectOneInfo(naverMapActivity, nickname)
-
-            Log.d("show123", "${str?.id}")
-
-            //Log.d("sho1234", "${nickname}")
-//            if (nickname != null){
-//                var str = MemoDAO.selectOneMemo(secondActivity, nickname)
-//                Log.d("seong12", "${str?.title}")
-//
-//                textViewTitle.text = "${str?.title}"
-//                textViewDate.text = "${str?.date}"
-//                textViewContents.text = "${str?.contents}"
-//            }
 
         }
     }
