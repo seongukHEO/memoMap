@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraPosition
@@ -28,6 +29,7 @@ import com.naver.maps.map.util.FusedLocationSource
 import kr.co.lion.android01.mapmemoproject.DataClassAll.MemoInfo
 import kr.co.lion.android01.mapmemoproject.Fragment.MemoInfoFragment
 import kr.co.lion.android01.mapmemoproject.R
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.InfoDAO
 import kr.co.lion.android01.mapmemoproject.SQL.DAO.MemoDAO
 import kr.co.lion.android01.mapmemoproject.Util
 import kr.co.lion.android01.mapmemoproject.databinding.ActivityNaverMapBinding
@@ -58,7 +60,7 @@ class NaverMapActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
-    lateinit var allMemo:List<MemoInfo>
+    lateinit var allMemo: List<MemoInfo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,12 +70,11 @@ class NaverMapActivity : AppCompatActivity() {
         activityNaverMapBinding = ActivityNaverMapBinding.inflate(layoutInflater)
         setContentView(activityNaverMapBinding.root)
         requestPermissions(permissionList, 0)
-        MemoDAO.selectAllMemo(this)
         initialization()
         setToolBar()
         settingNaverMap()
         initView()
-
+        //markerFromDataBase()
 
 
         NaverMapSdk.getInstance(this).client =
@@ -83,13 +84,22 @@ class NaverMapActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         initialization()
+        //markerFromDataBase()
     }
 
     //초기화 작업
-    private fun initialization(){
+    private fun initialization() {
         allMemo = MemoDAO.selectAllMemo(this)
 
-        Log.d("seong7182", "${allMemo}")
+        //Log.d("seong7182", "${allMemo}")
+    }
+
+    //위 경도를 추출하여 마커를 표시하는 함수
+    private fun markerFromDataBase(){
+        val memoList = allMemo
+        for (memo in memoList){
+            screenJob(memo.latitude, memo.longitude)
+        }
     }
 
     //뷰 설정
@@ -106,9 +116,10 @@ class NaverMapActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun getUserMemo(latitude: Double, longitude: Double): MemoInfo? {
         allMemo.forEach {
-            if (it.latitude == latitude && it.longitude == longitude){
+            if (it.latitude == latitude && it.longitude == longitude) {
                 return it
             }
         }
@@ -120,8 +131,11 @@ class NaverMapActivity : AppCompatActivity() {
         activityNaverMapBinding.apply {
             materialToolbar5.apply {
                 val nickname = intent.getStringExtra("nickname")
+                if (nickname != null){
+                    val showNickName = InfoDAO.selectOneInfo(this@NaverMapActivity, nickname)
+                    title = "${showNickName?.nickName}의 메모 지도"
+                }
 
-                title = "${nickname}의 메모 지도"
 
                 //연습
                 inflateMenu(R.menu.main_menu)
@@ -161,13 +175,39 @@ class NaverMapActivity : AppCompatActivity() {
     }
 
     //화면 작업
-    private fun screenJob(latitude: Double, longitude: Double) {
+    private fun screenJob(latitude1: Double, longitude1: Double) {
         //마커 옵션을 만들어준다
         val marker = Marker()
-        marker.position = LatLng(latitude, longitude)
+        marker.position = LatLng(latitude1, longitude1)
         marker.map = naverMap
 
+        marker.setOnClickListener {
+            val getData = getUserMemo(latitude1, longitude1)
+            if (getData != null) {
+                val bottomShowFragment = MemoInfoFragment()
+
+                val bundle = Bundle()
+                bundle.putInt("idx", getData.idx)
+                bottomShowFragment.arguments = bundle
+
+                bottomShowFragment.show(this.supportFragmentManager, "bottomSheet")
+            } else {
+                Util.showDiaLog(
+                    this,
+                    "네트워크 오류",
+                    "GPS가 불안정합니다"
+                ) { dialogInterface: DialogInterface, i: Int ->
+
+                }
+            }
+
+            true
+        }
+
+
+
     }
+
 
     //네이버 지도 세팅
     private fun settingNaverMap() {
@@ -182,6 +222,8 @@ class NaverMapActivity : AppCompatActivity() {
 
             //네이버 지도 객체를 담아준다
             naverMap = it
+
+            markerFromDataBase()
 
             locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
 
@@ -201,25 +243,6 @@ class NaverMapActivity : AppCompatActivity() {
                     marker.map = naverMap
                     //Log.d("test1234", "${latLng.latitude}")
 
-
-                    marker.setOnClickListener {
-                        val getData = getUserMemo(latLng.latitude, latLng.longitude)
-                        if (getData != null) {
-                            val bottomShowFragment = MemoInfoFragment()
-
-                            val bundle = Bundle()
-                            bundle.putInt("idx", getData.idx)
-                            bottomShowFragment.arguments = bundle
-
-                            bottomShowFragment.show(this.supportFragmentManager, "bottomSheet")
-                        }else{
-                            Util.showDiaLog(this, "네트웤", "오류"){ dialogInterface: DialogInterface, i: Int ->
-
-                            }
-                        }
-
-                        true
-                    }
 
 
                     val latitudelocation = latLng.latitude
@@ -255,7 +278,6 @@ class NaverMapActivity : AppCompatActivity() {
     // (화면에 진입하면) 나의 디비에 있는 모든 메모 리스트를 가져와 변수에 리스트를 저장해둔다. List<MemoInfo>
     // 마커를 클릭했을 때, 마커에 있는 위경도 값으로 현재 메모리스트에 있는 메모들 중에 같은 위경도에 있는 메모가 있는지 체크한다.
     // 그 메모를 리턴하거나 메모의 index값을 리턴한다.
-
 
 
     //현재 나의 위치를 가져오는 메서드
@@ -303,7 +325,6 @@ class NaverMapActivity : AppCompatActivity() {
     companion object {
         val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
-
 
 
 }
