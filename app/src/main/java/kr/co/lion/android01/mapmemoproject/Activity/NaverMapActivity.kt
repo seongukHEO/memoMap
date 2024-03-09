@@ -50,6 +50,8 @@ class NaverMapActivity : AppCompatActivity() {
 
     lateinit var locationSource: FusedLocationSource
 
+    var myMarker = mutableListOf<Marker>()
+
 
     //런쳐
     lateinit var thirdActivityLauncher: ActivityResultLauncher<Intent>
@@ -61,6 +63,7 @@ class NaverMapActivity : AppCompatActivity() {
     )
 
     lateinit var allMemo: List<MemoInfo>
+    val bottomShowFragment = MemoInfoFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +77,8 @@ class NaverMapActivity : AppCompatActivity() {
         setToolBar()
         settingNaverMap()
         initView()
-        //markerFromDataBase()
+
+
 
 
         NaverMapSdk.getInstance(this).client =
@@ -84,20 +88,22 @@ class NaverMapActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         initialization()
-        //markerFromDataBase()
+
+
     }
 
     //초기화 작업
     private fun initialization() {
         allMemo = MemoDAO.selectAllMemo(this)
 
+
         //Log.d("seong7182", "${allMemo}")
     }
 
     //위 경도를 추출하여 마커를 표시하는 함수
-    private fun markerFromDataBase(){
+    private fun markerFromDataBase() {
         val memoList = allMemo
-        for (memo in memoList){
+        for (memo in memoList) {
             screenJob(memo.latitude, memo.longitude)
         }
     }
@@ -116,6 +122,20 @@ class NaverMapActivity : AppCompatActivity() {
             }
         }
     }
+    //선택한 위 경도에 해당하는 마커를 리스트에서 제거한다
+    fun removeMarker(latitude: Double, longitude: Double){
+        val markersToRemove = mutableListOf<Marker>()
+        for (marker in myMarker){
+            val markerLatLng = marker.position
+            if (markerLatLng.latitude == latitude && markerLatLng.longitude == longitude){
+                markersToRemove.add(marker)
+            }
+        }
+        for (marker in markersToRemove){
+            marker.map = null
+            myMarker.remove(marker)
+        }
+    }
 
     private fun getUserMemo(latitude: Double, longitude: Double): MemoInfo? {
         allMemo.forEach {
@@ -131,11 +151,10 @@ class NaverMapActivity : AppCompatActivity() {
         activityNaverMapBinding.apply {
             materialToolbar5.apply {
                 val nickname = intent.getStringExtra("nickname")
-                if (nickname != null){
+                if (nickname != null) {
                     val showNickName = InfoDAO.selectOneInfo(this@NaverMapActivity, nickname)
                     title = "${showNickName?.nickName}의 메모 지도"
                 }
-
 
                 //연습
                 inflateMenu(R.menu.main_menu)
@@ -143,8 +162,7 @@ class NaverMapActivity : AppCompatActivity() {
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.practice_menu -> {
-                            val newIntent = Intent(this@NaverMapActivity, MemoActivity::class.java)
-                            startActivity(newIntent)
+                            AllMarkerDataDelete()
                         }
 
                         R.id.my_location_here -> {
@@ -175,16 +193,17 @@ class NaverMapActivity : AppCompatActivity() {
     }
 
     //화면 작업
-    private fun screenJob(latitude1: Double, longitude1: Double) {
+    fun screenJob(latitude1: Double, longitude1: Double) {
         //마커 옵션을 만들어준다
         val marker = Marker()
         marker.position = LatLng(latitude1, longitude1)
         marker.map = naverMap
 
+        myMarker.add(marker)
+
         marker.setOnClickListener {
             val getData = getUserMemo(latitude1, longitude1)
             if (getData != null) {
-                val bottomShowFragment = MemoInfoFragment()
 
                 val bundle = Bundle()
                 bundle.putInt("idx", getData.idx)
@@ -200,10 +219,8 @@ class NaverMapActivity : AppCompatActivity() {
 
                 }
             }
-
             true
         }
-
 
 
     }
@@ -225,6 +242,7 @@ class NaverMapActivity : AppCompatActivity() {
 
             markerFromDataBase()
 
+
             locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
 
             naverMap.locationSource = locationSource
@@ -238,12 +256,7 @@ class NaverMapActivity : AppCompatActivity() {
                     "메모 추가",
                     "이 지점에 메모를 추가하시겠습니까?"
                 ) { dialogInterface: DialogInterface, i: Int ->
-                    val marker = Marker()
-                    marker.position = latLng
-                    marker.map = naverMap
-                    //Log.d("test1234", "${latLng.latitude}")
-
-
+                    screenJob(latLng.latitude, latLng.longitude)
 
                     val latitudelocation = latLng.latitude
                     val longitudeLocation = latLng.longitude
@@ -275,11 +288,6 @@ class NaverMapActivity : AppCompatActivity() {
         }
 
     }
-    // (화면에 진입하면) 나의 디비에 있는 모든 메모 리스트를 가져와 변수에 리스트를 저장해둔다. List<MemoInfo>
-    // 마커를 클릭했을 때, 마커에 있는 위경도 값으로 현재 메모리스트에 있는 메모들 중에 같은 위경도에 있는 메모가 있는지 체크한다.
-    // 그 메모를 리턴하거나 메모의 index값을 리턴한다.
-
-
     //현재 나의 위치를 가져오는 메서드
     private fun getMyLocation() {
         //위치 정보 사용 권한 허용 여부 확인
@@ -322,9 +330,15 @@ class NaverMapActivity : AppCompatActivity() {
 
     }
 
+    //모든 마커와 제거한다
+    private fun AllMarkerDataDelete(){
+        myMarker.forEach {
+            it.map = null
+        }
+    }
+
     companion object {
         val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
-
 
 }
