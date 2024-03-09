@@ -3,6 +3,7 @@ package kr.co.lion.android01.mapmemoproject.Fragment
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +11,10 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import kr.co.lion.android01.mapmemoproject.Activity.NaverMapActivity
 import kr.co.lion.android01.mapmemoproject.Activity.MemoActivity
+import kr.co.lion.android01.mapmemoproject.DataClassAll.MemoInfo
 import kr.co.lion.android01.mapmemoproject.FragmentName2
 import kr.co.lion.android01.mapmemoproject.R
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.MemoDAO
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentModifyBinding
 import kr.co.lion.android01.mapmemoproject.Util
 
@@ -60,6 +63,7 @@ class ModifyFragment : Fragment() {
                         "메모를 수정하시겠습니까?"
                     ) { dialogInterface: DialogInterface, i: Int ->
                         var newIntent = Intent(memoActivity, NaverMapActivity::class.java)
+                        getData()
                         startActivity(newIntent)
 
                     }
@@ -71,10 +75,15 @@ class ModifyFragment : Fragment() {
     //값을 보여준다
     private fun showResult() {
         fragmentModifyBinding.apply {
-            textModifyNickName.setText("허성욱")
-            textModifyDate.setText("2024-03-04")
-            textModifyTitle.setText("후우")
-            textModifyContents.setText("안녕 !!")
+            var idx = arguments?.getInt("idx")
+            //Log.d("gye123", "${idx}")
+            if (idx != null){
+                val memoInfo = MemoDAO.selectOneMemo(memoActivity, idx)
+                textModifyNickName.setText("${memoInfo?.nickName}")
+                textModifyDate.setText("${memoInfo?.date}")
+                textModifyTitle.setText("${memoInfo?.title}")
+                textModifyContents.setText("${memoInfo?.contents}")
+            }
         }
     }
 
@@ -82,12 +91,9 @@ class ModifyFragment : Fragment() {
     private fun setView() {
         fragmentModifyBinding.apply {
             //포커스 주기
-            memoActivity.showSoftInput2(textModifyNickName)
+            memoActivity.showSoftInput2(textModifyTitle)
 
             //에러 해결
-            textModifyNickName.addTextChangedListener {
-                textModifyLayoutNickName.error = null
-            }
             textModifyTitle.addTextChangedListener {
                 textLayoutModifyTitle.error = null
             }
@@ -101,15 +107,6 @@ class ModifyFragment : Fragment() {
     private fun checkOK(): Boolean {
         fragmentModifyBinding.apply {
             var errorView: View? = null
-
-            val nickname = textModifyNickName.text.toString()
-            if (nickname.trim().isEmpty()) {
-                textModifyLayoutNickName.error = "닉네임을 입력해주세요"
-                errorView = textModifyNickName
-
-            } else {
-                textModifyLayoutNickName.error = null
-            }
 
             val title = textModifyTitle.text.toString()
             if (title.trim().isEmpty()) {
@@ -136,6 +133,30 @@ class ModifyFragment : Fragment() {
                 return false
             } else {
                 return true
+            }
+        }
+    }
+
+    //값을 구해 insert 해준다
+    private fun getData(){
+        fragmentModifyBinding.apply {
+            var idx = arguments?.getInt("idx")
+
+            if (idx != null){
+                val info = MemoDAO.selectOneMemo(memoActivity, idx)
+
+                var latitude = info?.latitude
+                var longitude = info?.longitude
+
+                var nickname = textModifyNickName.text.toString()
+                var date = textModifyDate.text.toString()
+                var title = textModifyTitle.text.toString()
+                var contents = textModifyContents.text.toString()
+
+                val memoList = MemoInfo(info!!.idx, nickname, date, title, contents, latitude!!, longitude!!)
+
+                MemoDAO.updateMemo(memoActivity, memoList)
+
             }
         }
     }
