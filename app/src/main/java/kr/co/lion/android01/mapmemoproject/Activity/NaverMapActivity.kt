@@ -9,12 +9,11 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraPosition
@@ -23,7 +22,6 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.NaverMapSdk
-import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import kr.co.lion.android01.mapmemoproject.DataClassAll.MemoInfo
@@ -52,10 +50,6 @@ class NaverMapActivity : AppCompatActivity() {
 
     var myMarker = mutableListOf<Marker>()
 
-
-    //런쳐
-    lateinit var thirdActivityLauncher: ActivityResultLauncher<Intent>
-
     //확인받은 권한 목록
     var permissionList = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -76,10 +70,7 @@ class NaverMapActivity : AppCompatActivity() {
         initialization()
         setToolBar()
         settingNaverMap()
-        initView()
-
-
-
+        //initView()
 
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient("89e2h0bkk5")
@@ -88,16 +79,11 @@ class NaverMapActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         initialization()
-
-
     }
 
     //초기화 작업
     private fun initialization() {
         allMemo = MemoDAO.selectAllMemo(this)
-
-
-        //Log.d("seong7182", "${allMemo}")
     }
 
     //위 경도를 추출하여 마커를 표시하는 함수
@@ -105,21 +91,6 @@ class NaverMapActivity : AppCompatActivity() {
         val memoList = allMemo
         for (memo in memoList) {
             screenJob(memo.latitude, memo.longitude)
-        }
-    }
-
-    //뷰 설정
-    private fun initView() {
-        val contract = ActivityResultContracts.StartActivityForResult()
-        thirdActivityLauncher = registerForActivityResult(contract) {
-            if (it.resultCode == RESULT_OK) {
-                if (it.data != null) {
-                    val latitude = it?.data!!.getDoubleExtra("latitude", 0.00)
-                    val longitude = it?.data!!.getDoubleExtra("longitude", 0.00)
-                    //Log.d("test1234", "${latitude}, ${longitude}")
-                    screenJob(latitude, longitude)
-                }
-            }
         }
     }
     //선택한 위 경도에 해당하는 마커를 리스트에서 제거한다
@@ -155,21 +126,25 @@ class NaverMapActivity : AppCompatActivity() {
                     val showNickName = InfoDAO.selectOneInfo(this@NaverMapActivity, nickname)
                     title = "${showNickName?.nickName}의 메모 지도"
                 }
-
-                //연습
                 inflateMenu(R.menu.main_menu)
                 //클릭
                 setOnMenuItemClickListener {
                     when (it.itemId) {
-                        R.id.practice_menu -> {
-                            AllMarkerDataDelete()
-                        }
+                        R.id.all_delete_menu -> {
+                            if (myMarker.isEmpty()){
+                                Util.showDiaLog(this@NaverMapActivity, "마커 없음", "저장된 마커가 없습니다"){ dialogInterface: DialogInterface, i: Int ->
 
+                                }
+                            }else{
+                                Util.showDiaLog(this@NaverMapActivity, "모든 마커 삭제", "마커를 삭제하면 복구할 수 없습니다!"){ dialogInterface: DialogInterface, i: Int ->
+                                    AllMarkerDataDelete()
+                                }
+                            }
+                        }
                         R.id.my_location_here -> {
                             getMyLocation()
                         }
                     }
-
                     true
                 }
             }
@@ -211,20 +186,18 @@ class NaverMapActivity : AppCompatActivity() {
 
                 bottomShowFragment.show(this.supportFragmentManager, "bottomSheet")
             } else {
-                Util.showDiaLog(
-                    this,
-                    "네트워크 오류",
-                    "GPS가 불안정합니다"
-                ) { dialogInterface: DialogInterface, i: Int ->
-
+                val dialogCancel = MaterialAlertDialogBuilder(this)
+                dialogCancel.setTitle("마커 지우기")
+                dialogCancel.setMessage("이 마커엔 메모가 없습니다. 마커를 삭제하시겠습니까?")
+                dialogCancel.setPositiveButton("삭제"){ dialogInterface: DialogInterface, i: Int ->
+                    removeMarker(latitude1, longitude1)
                 }
+                dialogCancel.setNegativeButton("취소", null)
+                dialogCancel.show()
             }
             true
         }
-
-
     }
-
 
     //네이버 지도 세팅
     private fun settingNaverMap() {
@@ -264,7 +237,7 @@ class NaverMapActivity : AppCompatActivity() {
                     val newIntent = Intent(this@NaverMapActivity, MemoActivity::class.java)
                     newIntent.putExtra("latitude", latitudelocation)
                     newIntent.putExtra("longitude", longitudeLocation)
-                    thirdActivityLauncher.launch(newIntent)
+                    startActivity(newIntent)
                 }
             }
 
