@@ -46,6 +46,7 @@ class InputFragment : Fragment() {
 
             }
             bottomAppBar.apply {
+
                 setNavigationIcon(R.drawable.arrow_back_24px)
                 setNavigationOnClickListener {
                     val newIntent = Intent(memoActivity, NaverMapActivity::class.java)
@@ -150,6 +151,7 @@ class InputFragment : Fragment() {
                 }
                 return
             }
+
             val latitude = arguments?.getDouble("latitude")!!
             val longitude = arguments?.getDouble("longitude")!!
 
@@ -168,8 +170,11 @@ class InputFragment : Fragment() {
 
             MemoDAO.insertMemo1(memoActivity, memoList)
 
+
+
+
+
             val newIntent = Intent(memoActivity, NaverMapActivity::class.java)
-            newIntent.putExtra("nickname", nickname)
             newIntent.putExtra("latitude", latitude)
             newIntent.putExtra("longitude", longitude)
             memoActivity.setResult(RESULT_OK, newIntent)

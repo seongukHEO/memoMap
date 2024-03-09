@@ -32,17 +32,26 @@ class MemoActivity : AppCompatActivity() {
         activityMemoBinding = ActivityMemoBinding.inflate(layoutInflater)
         setContentView(activityMemoBinding.root)
 
-        val str = intent.getDoubleExtra("latitude", 0.00)
-        val str2 = intent.getDoubleExtra("longitude", 0.00)
-        if (str != null || str2 != null) {
-            val bundle = Bundle()
-            Log.d("test1234", "${str}")
-            bundle.putDouble("latitude", str)
-            bundle.putDouble("longitude", str2)
+        val latitude = intent.getDoubleExtra("latitude", 0.00)
+        val longitude = intent.getDoubleExtra("longitude", 0.00)
+        val idx = intent.getIntExtra("idx", 0)
 
+//        Log.d("uk123", "$idx")
+//        Log.d("uk123", "$latitude")
+
+
+        if (idx != 0) {
+            val bundleIdx = Bundle().apply {
+                putInt("idx", idx)
+            }
+            replaceFragment(FragmentName2.MODIFY_FRAGMENT, false, false, bundleIdx)
+
+        }else {
+            val bundle = Bundle().apply {
+                putDouble("latitude", latitude)
+                putDouble("longitude", longitude)
+            }
             replaceFragment(FragmentName2.INPUT_FRAGMENT, false, false, bundle)
-        }else{
-            replaceFragment(FragmentName2.MODIFY_FRAGMENT, false, false, null)
         }
     }
 

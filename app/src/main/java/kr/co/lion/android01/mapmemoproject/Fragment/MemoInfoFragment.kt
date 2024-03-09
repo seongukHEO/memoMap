@@ -37,8 +37,6 @@ class MemoInfoFragment : BottomSheetDialogFragment() {
         return fragmentMemoInfoBinding.root
     }
 
-
-
     //내용을 보여준다
     private fun showResult() {
         fragmentMemoInfoBinding.apply {
@@ -59,8 +57,15 @@ class MemoInfoFragment : BottomSheetDialogFragment() {
     private fun setEvent() {
         fragmentMemoInfoBinding.apply {
             modifyButton.setOnClickListener {
-                var newIntent = Intent(naverMapActivity, MemoActivity::class.java)
-                startActivity(newIntent)
+                val getIdx = arguments?.getInt("idx")!!
+                val idx = MemoDAO.selectOneMemo(naverMapActivity, getIdx)
+                Log.d("uk123", "${idx?.idx}")
+
+                if (idx != null){
+                    val newIntent = Intent(naverMapActivity, MemoActivity::class.java)
+                    newIntent.putExtra("idx", idx.idx)
+                    startActivity(newIntent)
+                }
 
             }
 

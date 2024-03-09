@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/practice_menu"
-        android:icon="@drawable/edit_24px"
-        android:title="연습"
+        android:id="@+id/all_delete_menu"
+        android:icon="@drawable/restart_alt_24px"
+        android:title="모든 정보 삭제"
         app:showAsAction="always" />
     <item
         android:id="@+id/my_location_here"

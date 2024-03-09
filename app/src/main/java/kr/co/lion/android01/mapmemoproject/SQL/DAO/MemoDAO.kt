@@ -10,7 +10,7 @@ class MemoDAO {
     companion object{
 
         //selectOne
-        fun selectOneMemo(context: Context, idx:String) : MemoInfo? {
+        fun selectOneMemo(context: Context, idx:Int) : MemoInfo? {
             //쿼리 생성
             var sql = """select *
                 |from MemoTable
@@ -18,7 +18,7 @@ class MemoDAO {
             """.trimMargin()
 
             //?에 들어갈 값
-            var args = arrayOf(idx)
+            var args = arrayOf(idx.toString())
 
             //쿼리 실행
             var dbHelper = DBHelper(context)
@@ -62,7 +62,7 @@ class MemoDAO {
             //쿼리 생성
             var sql = """select *
                 |from MemoTable
-                |order by nickName desc
+                |order by idx desc
             """.trimMargin()
 
             //쿼리 실행
@@ -119,24 +119,6 @@ class MemoDAO {
             dbHelper.close()
         }
 
-        //위 경도를 저장한다
-        fun insertMemo2(context: Context, latitude:Double, longitude:Double) {
-            var sql = """insert into MemoTable
-                |(latitude, longitude)
-                |values(?, ?)
-            """.trimMargin()
-
-            //?에 들어갈 값
-            var args = arrayOf(latitude, longitude)
-
-            //쿼리 실행
-            var dbHelper = DBHelper(context)
-            dbHelper.writableDatabase.execSQL(sql, args)
-            dbHelper.close()
-        }
-
-
-
 
         //update
         fun updateMemo(context: Context, memoInfo: MemoInfo){
@@ -159,20 +141,22 @@ class MemoDAO {
 
 
         //delete
-        fun deleteMemo(context: Context, nickName:String){
+        fun deleteMemo(context: Context, idx: Int){
             //쿼리 생성
             var sql = """delete from MemoTable
-                |where nickName = ?
+                |where idx = ?
             """.trimMargin()
 
             //?에 들어갈 값
-            var args = arrayOf(nickName)
+            var args = arrayOf(idx)
 
             //쿼리 실행
             var dbHelper = DBHelper(context)
             dbHelper.writableDatabase.execSQL(sql,args)
+            dbHelper.close()
 
         }
+
 
         fun getUserAllInfo(context: Context, nickName: String) : UserInfoAll? {
             var sql = """select InfoTable.nickName, InfoTable.id, MemoTable.nickName, MemoTable.date, MemoTable.title, MemoTable.contents, 
