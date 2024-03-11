@@ -25,6 +25,8 @@ import com.naver.maps.map.NaverMapSdk
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import kr.co.lion.android01.mapmemoproject.DataClassAll.MemoInfo
+import kr.co.lion.android01.mapmemoproject.DataClassAll.UserInfo
+import kr.co.lion.android01.mapmemoproject.DataClassAll.UserInfoAll
 import kr.co.lion.android01.mapmemoproject.Fragment.MemoInfoFragment
 import kr.co.lion.android01.mapmemoproject.R
 import kr.co.lion.android01.mapmemoproject.SQL.DAO.InfoDAO
@@ -57,6 +59,8 @@ class NaverMapActivity : AppCompatActivity() {
     )
 
     lateinit var allMemo: List<MemoInfo>
+
+    
     val bottomShowFragment = MemoInfoFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,7 +146,19 @@ class NaverMapActivity : AppCompatActivity() {
                             }
                         }
                         R.id.my_location_here -> {
-                            getMyLocation()
+                            //getMyLocation()
+                            var latitude = locationSource.lastLocation!!.latitude
+                            var longitude = locationSource.lastLocation!!.longitude
+
+                            //마커 생성
+                            val marker = Marker()
+                            marker.position = LatLng(latitude, longitude)
+                            marker.map = naverMap
+
+                            myMarker.add(marker)
+
+                            //메모 추가 메서드 호출
+                            extraMemo(latitude, longitude)
                         }
                     }
                     true
@@ -224,21 +240,7 @@ class NaverMapActivity : AppCompatActivity() {
 
             //네이버 맵을 클릭?
             naverMap.setOnMapClickListener { pointF, latLng ->
-                Util.showDiaLog(
-                    this,
-                    "메모 추가",
-                    "이 지점에 메모를 추가하시겠습니까?"
-                ) { dialogInterface: DialogInterface, i: Int ->
-                    screenJob(latLng.latitude, latLng.longitude)
-
-                    val latitudelocation = latLng.latitude
-                    val longitudeLocation = latLng.longitude
-
-                    val newIntent = Intent(this@NaverMapActivity, MemoActivity::class.java)
-                    newIntent.putExtra("latitude", latitudelocation)
-                    newIntent.putExtra("longitude", longitudeLocation)
-                    startActivity(newIntent)
-                }
+                extraMemo(latLng.latitude, latLng.longitude)
             }
 
 
@@ -261,6 +263,26 @@ class NaverMapActivity : AppCompatActivity() {
         }
 
     }
+    //메모 추가 메서드
+    private fun extraMemo(latitude5: Double, longitude5: Double){
+        Util.showDiaLog(
+            this,
+            "메모 추가",
+            "이 지점에 메모를 추가하시겠습니까?"
+        ) { dialogInterface: DialogInterface, i: Int ->
+            screenJob(latitude5, longitude5)
+
+            val latitudelocation = latitude5
+            val longitudeLocation = longitude5
+
+            val newIntent = Intent(this@NaverMapActivity, MemoActivity::class.java)
+            newIntent.putExtra("latitude", latitudelocation)
+            newIntent.putExtra("longitude", longitudeLocation)
+            startActivity(newIntent)
+        }
+    }
+
+
     //현재 나의 위치를 가져오는 메서드
     private fun getMyLocation() {
         //위치 정보 사용 권한 허용 여부 확인
