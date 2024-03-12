@@ -9,6 +9,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -128,7 +129,13 @@ class NaverMapActivity : AppCompatActivity() {
                 val nickname = intent.getStringExtra("nickname")
                 if (nickname != null) {
                     val showNickName = InfoDAO.selectOneInfo(this@NaverMapActivity, nickname)
-                    title = "${showNickName?.nickName}의 메모 지도"
+                    Log.d("rim1234", "${showNickName?.nickName}")
+
+                    if(showNickName?.nickName!!.isEmpty()){
+                        title = "나의 메모 지도!"
+                    }else{
+                        title = "${showNickName.nickName}의 메모 지도"
+                    }
                 }
                 inflateMenu(R.menu.main_menu)
                 //클릭
@@ -142,6 +149,7 @@ class NaverMapActivity : AppCompatActivity() {
                             }else{
                                 Util.showDiaLog(this@NaverMapActivity, "모든 마커 삭제", "마커를 삭제하면 복구할 수 없습니다!"){ dialogInterface: DialogInterface, i: Int ->
                                     AllMarkerDataDelete()
+                                    MemoDAO.deleteAllMemos(this@NaverMapActivity)
                                 }
                             }
                         }
