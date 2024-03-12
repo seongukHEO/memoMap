@@ -156,13 +156,28 @@ class MemoDAO {
             dbHelper.close()
 
         }
+        fun deleteAllMemos(context: Context) {
+            // 쿼리 생성
+            val sql = "DELETE FROM MemoTable"
+
+            // DBHelper 인스턴스 생성
+            val dbHelper = DBHelper(context)
+
+            // 쿼리 실행
+            val db = dbHelper.writableDatabase
+            db.execSQL(sql)
+
+            // DBHelper 닫기
+            dbHelper.close()
+        }
+
 
 
         fun getUserAllInfo(context: Context, nickName: String) : UserInfoAll? {
             var sql = """select InfoTable.nickName, InfoTable.id, MemoTable.nickName, MemoTable.date, MemoTable.title, MemoTable.contents, 
                 MemoTable.latitude, MemoTable.longitude
                 From InfoTable
-                Left Join MemeTable ON InfoTable.nickName = MemoTable.nickName
+                Left Join MemoTable ON InfoTable.nickName = MemoTable.nickName
                 where InfoTable.nickName = ?
             """.trimMargin()
 

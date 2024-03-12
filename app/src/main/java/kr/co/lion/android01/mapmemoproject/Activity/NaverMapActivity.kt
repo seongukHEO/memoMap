@@ -75,7 +75,7 @@ class NaverMapActivity : AppCompatActivity() {
         initialization()
         setToolBar()
         settingNaverMap()
-        //initView()
+
 
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient("89e2h0bkk5")
@@ -127,16 +127,22 @@ class NaverMapActivity : AppCompatActivity() {
         activityNaverMapBinding.apply {
             materialToolbar5.apply {
                 val nickname = intent.getStringExtra("nickname")
+                //Log.d("please123", "${MemoDAO.getUserAllInfo(this@NaverMapActivity, nickname!!)}")
                 if (nickname != null) {
                     val showNickName = InfoDAO.selectOneInfo(this@NaverMapActivity, nickname)
-                    Log.d("rim1234", "${showNickName?.nickName}")
+                    //Log.d("rim1234", "${showNickName?.nickName}")
 
-                    if(showNickName?.nickName!!.isEmpty()){
-                        title = "나의 메모 지도!"
-                    }else{
-                        title = "${showNickName.nickName}의 메모 지도"
-                    }
+                    title = "${showNickName?.nickName}의 메모 지도"
+
                 }
+                //아이콘
+                setNavigationIcon(R.drawable.person_123)
+                setNavigationOnClickListener {
+                    val newIntent = Intent(this@NaverMapActivity, UserInfoActivity::class.java)
+                    startActivity(newIntent)
+                }
+
+                //메뉴
                 inflateMenu(R.menu.main_menu)
                 //클릭
                 setOnMenuItemClickListener {

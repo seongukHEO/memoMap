@@ -16,6 +16,11 @@ enum class FragmentName2(var str:String){
     MODIFY_FRAGMENT("ModifyFragment"),
 }
 
+enum class FragmentNameUserInfo(var str: String){
+    USER_INFO_FRAGMENT("UserInfoFragment"),
+    USER_INFO_MODIFY_FRAGMENT("UserInfoModifyFragment")
+}
+
 
 
 

@@ -9,7 +9,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/my_location_here"
-        android:icon="@android:drawable/ic_menu_mylocation"
-        android:title="현재 위치"
+        android:icon="@drawable/please_map"
+        android:title="현재 위치 메모"
         app:showAsAction="always" />
 </menu>

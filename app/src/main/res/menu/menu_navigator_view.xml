@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-  
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="나의 정보">
+        <menu>
+            <item
+                android:id="@+id/menuMyMemoInfo"
+                android:icon="@drawable/person_123"
+                android:title="나의 메모"
+                app:showAsAction="ifRoom" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/userInfoChange"
+        android:icon="@drawable/change_123"
+        android:title="사용자 정보 수정"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/userLogout"
+        android:icon="@drawable/logout_24"
+        android:title="로그아웃"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/endUserInfo"
+        android:icon="@drawable/user_off"
+        android:title="회원탈퇴" />
 </menu>
