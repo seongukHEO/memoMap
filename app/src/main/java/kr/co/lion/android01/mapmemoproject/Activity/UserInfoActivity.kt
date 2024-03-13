@@ -26,6 +26,7 @@ class UserInfoActivity : AppCompatActivity() {
 
         activityUserInfoBinding = ActivityUserInfoBinding.inflate(layoutInflater)
         setContentView(activityUserInfoBinding.root)
+        settingNavigationView()
         replaceFragment(FragmentNameUserInfo.USER_INFO_FRAGMENT, false, false , null)
     }
 

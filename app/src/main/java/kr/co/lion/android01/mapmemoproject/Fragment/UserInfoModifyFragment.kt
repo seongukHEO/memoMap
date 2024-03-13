@@ -5,56 +5,85 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kr.co.lion.android01.mapmemoproject.Activity.UserInfoActivity
+import kr.co.lion.android01.mapmemoproject.FragmentNameUserInfo
 import kr.co.lion.android01.mapmemoproject.R
+import kr.co.lion.android01.mapmemoproject.databinding.FragmentUserInfoModifyBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [UserInfoModifyFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class UserInfoModifyFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    lateinit var fragmentUserInfoModifyBinding: FragmentUserInfoModifyBinding
+    lateinit var userInfoActivity: UserInfoActivity
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        fragmentUserInfoModifyBinding = FragmentUserInfoModifyBinding.inflate(layoutInflater)
+        userInfoActivity = activity as UserInfoActivity
+        settingToolBar()
+
+        return fragmentUserInfoModifyBinding.root
+    }
+
+    //툴바 세팅
+    fun settingToolBar(){
+        fragmentUserInfoModifyBinding.apply {
+            toolBarUserInfoModify.apply {
+                title = "나의 정보 수정"
+                setNavigationIcon(R.drawable.arrow_back_24px)
+                setNavigationOnClickListener {
+                    userInfoActivity.removeFragment(FragmentNameUserInfo.USER_INFO_MODIFY_FRAGMENT)
+                }
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_info_modify, container, false)
-    }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment UserInfoModifyFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            UserInfoModifyFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

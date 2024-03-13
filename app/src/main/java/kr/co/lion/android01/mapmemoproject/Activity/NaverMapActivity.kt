@@ -127,10 +127,9 @@ class NaverMapActivity : AppCompatActivity() {
         activityNaverMapBinding.apply {
             materialToolbar5.apply {
                 val nickname = intent.getStringExtra("nickname")
-                //Log.d("please123", "${MemoDAO.getUserAllInfo(this@NaverMapActivity, nickname!!)}")
+                Log.d("str123", "${MemoDAO.getUserAllInfo(this@NaverMapActivity, nickname!!)}")
                 if (nickname != null) {
                     val showNickName = InfoDAO.selectOneInfo(this@NaverMapActivity, nickname)
-                    //Log.d("rim1234", "${showNickName?.nickName}")
 
                     title = "${showNickName?.nickName}의 메모 지도"
 
