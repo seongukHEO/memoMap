@@ -19,6 +19,7 @@ import kr.co.lion.android01.mapmemoproject.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment() {
 
+
     lateinit var fragmentLoginBinding: FragmentLoginBinding
     lateinit var loginActivity: LoginActivity
 

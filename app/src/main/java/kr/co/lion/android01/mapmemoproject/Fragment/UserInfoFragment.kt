@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import kr.co.lion.android01.mapmemoproject.Activity.UserInfoActivity
 import kr.co.lion.android01.mapmemoproject.R
+import kr.co.lion.android01.mapmemoproject.SQL.DAO.InfoDAO
 import kr.co.lion.android01.mapmemoproject.databinding.FragmentUserInfoBinding
 
 class UserInfoFragment : Fragment() {
@@ -20,6 +21,7 @@ class UserInfoFragment : Fragment() {
         fragmentUserInfoBinding = FragmentUserInfoBinding.inflate(layoutInflater)
         userInfoActivity = activity as UserInfoActivity
         setToolBar()
+        settingView()
         return fragmentUserInfoBinding.root
     }
 
@@ -36,4 +38,52 @@ class UserInfoFragment : Fragment() {
             }
         }
     }
+
+    //뷰 설정
+    private fun settingView(){
+        fragmentUserInfoBinding.apply {
+            val nickname = arguments?.getString("nickname")
+            if (nickname != null){
+                val userInfo = InfoDAO.selectOneInfo(userInfoActivity, nickname)
+
+                textUserInfoModifyName.setText("이름 : ${userInfo?.name}")
+                textUserInfoNumber.setText("휴대폰 번호 : ${userInfo?.number}")
+                textUserInfoNickname.setText("닉네임 : ${userInfo?.nickName}")
+            }
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -127,7 +127,7 @@ class NaverMapActivity : AppCompatActivity() {
         activityNaverMapBinding.apply {
             materialToolbar5.apply {
                 val nickname = intent.getStringExtra("nickname")
-                Log.d("str123", "${MemoDAO.getUserAllInfo(this@NaverMapActivity, nickname!!)}")
+                Log.d("str123456", "${MemoDAO.getUserAllInfo(this@NaverMapActivity, nickname!!)}")
                 if (nickname != null) {
                     val showNickName = InfoDAO.selectOneInfo(this@NaverMapActivity, nickname)
 
@@ -138,6 +138,7 @@ class NaverMapActivity : AppCompatActivity() {
                 setNavigationIcon(R.drawable.person_123)
                 setNavigationOnClickListener {
                     val newIntent = Intent(this@NaverMapActivity, UserInfoActivity::class.java)
+                    newIntent.putExtra("nickname", nickname)
                     startActivity(newIntent)
                 }
 

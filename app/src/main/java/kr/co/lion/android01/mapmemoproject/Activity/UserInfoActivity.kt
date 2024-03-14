@@ -3,6 +3,7 @@ package kr.co.lion.android01.mapmemoproject.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -27,7 +28,13 @@ class UserInfoActivity : AppCompatActivity() {
         activityUserInfoBinding = ActivityUserInfoBinding.inflate(layoutInflater)
         setContentView(activityUserInfoBinding.root)
         settingNavigationView()
-        replaceFragment(FragmentNameUserInfo.USER_INFO_FRAGMENT, false, false , null)
+        val nickname = intent.getStringExtra("nickname")
+
+        val bundle = Bundle()
+        bundle.putString("nickname", nickname)
+        Log.d("test1234", "${nickname}")
+
+        replaceFragment(FragmentNameUserInfo.USER_INFO_FRAGMENT, false, false , bundle)
     }
 
     // 지정한 Fragment를 보여주는 메서드
