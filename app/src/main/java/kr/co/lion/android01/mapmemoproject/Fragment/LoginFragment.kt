@@ -47,7 +47,7 @@ class LoginFragment : Fragment() {
     private fun setToolBar(){
         fragmentLoginBinding.apply {
             materialToolbar.apply {
-                title = "메모히어"
+                title = "메모 히어"
             }
         }
     }
